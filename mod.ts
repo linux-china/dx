@@ -26,7 +26,7 @@ export async function $(pieces: TemplateStringsArray, ...args: Array<unknown>): 
         stderr: "piped"
     });
     // @ts-ignore
-    await p.stdin.write(textEncoder.encode(compiled));
+    await p.stdin.write(textEncoder.encode("set -euo pipefail;" + compiled));
     // @ts-ignore
     await p.stdin.close();
     const [status, stdout, stderr] = await Promise.all([
@@ -76,10 +76,6 @@ export const os = {
 
     type: (): string => {
         return Deno.build.os;
-    },
-
-    version: (): string => {
-        return Deno.osRelease();
     },
 
     tmpdir: (): string | undefined => {
