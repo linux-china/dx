@@ -1,6 +1,4 @@
 import {readLines} from "https://deno.land/std@0.95.0/io/bufio.ts";
-import chalkDeno from "https://deno.land/x/chalk_deno@v4.1.1-deno/source/index.js"
-
 
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
