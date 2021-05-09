@@ -64,7 +64,6 @@ console.log(green("Hello"));
 
 在每一个运行的命令行添加一个前缀，默认为 `set -euo pipefail;`
 
-
 # References
 
 * Google zx: https://github.com/google/zx
