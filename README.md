@@ -9,6 +9,12 @@ zx is based on Deno and with following pros:
 * Easy to import third party modules, just `import {red, green} from "https://deno.land/std@0.95.0/fmt/colors.ts"`, no idea about zx to import third party npm(package.json???)
 * I ❤️ Deno  :)
 
+# Install
+
+```bash
+deno install -A --unstable -n dx https://denopkg.com/linux-china/dx/cli.ts
+```
+
 # Demo
 
 ```typescript
@@ -33,7 +39,7 @@ let json = await fetch('https://httpbin.org/ip').then(resp => resp.json());
 console.log("Your ip: ", json.origin)
 ```
 
-Then run `deno run -A demo.ts`.
+Then run `dx demo.ts`.
 
 # functions and variables
 
