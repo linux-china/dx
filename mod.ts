@@ -1,4 +1,8 @@
 import {readLines} from "https://deno.land/std@0.95.0/io/bufio.ts";
+import * as os from 'https://deno.land/std@0.95.0/node/os.ts';
+import * as nodeFs from 'https://deno.land/std@0.95.0/node/fs.ts';
+
+export * as os from 'https://deno.land/std@0.95.0/node/os.ts';
 
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
@@ -79,73 +83,7 @@ export async function question(prompt: string) {
     }
 }
 
-export const os = {
-    homedir: (): string | undefined => {
-        return Deno.env.get("HOME");
-    },
-    arch: (): string => {
-        return Deno.build.arch;
-    },
-
-    type: (): string => {
-        return Deno.build.os;
-    },
-
-    tmpdir: (): string | undefined => {
-        return env.get("TMPDIR")
-    },
-
-    hostname: (): string => {
-        return Deno.build.os;
-    }
-}
-
-export const fs = {
-    chmod: Deno.chmod,
-    chmodSync: Deno.chmodSync,
-    chown: Deno.chown,
-    chownSync: Deno.chownSync,
-    copy: Deno.copy,
-    copyFile: Deno.copyFile,
-    copyFileSync: Deno.copyFileSync,
-    create: Deno.create,
-    createSync: Deno.createSync,
-    open: Deno.open,
-    openSync: Deno.openSync,
-    read: Deno.read,
-    readAll: Deno.readAll,
-    readAllSync: Deno.readAllSync,
-    readDir: Deno.readDir,
-    readDirSync: Deno.readDirSync,
-    readFile: Deno.readFile,
-    readFileSync: Deno.readFileSync,
-    readLink: Deno.readLink,
-    readLinkSync: Deno.readLinkSync,
-    readSync: Deno.readSync,
-    readTextFile: Deno.readTextFile,
-    readTextFileSync: Deno.readTextFileSync,
-    realPath: Deno.realPath,
-    realPathSync: Deno.realPathSync,
-    remove: Deno.remove,
-    removeSync: Deno.removeSync,
-    rename: Deno.rename,
-    renameSync: Deno.renameSync,
-    stat: Deno.stat,
-    statSync: Deno.statSync,
-    symlink: Deno.symlink,
-    symlinkSync: Deno.symlinkSync,
-    truncate: Deno.truncate,
-    truncateSync: Deno.truncateSync,
-    watchFs: Deno.watchFs,
-    write: Deno.write,
-    writeAll: Deno.writeAll,
-    writeAllSync: Deno.writeAllSync,
-    writeFile: Deno.writeFile,
-    writeFileSync: Deno.writeFileSync,
-    writeSync: Deno.writeSync,
-    writeTextFile: Deno.writeTextFile,
-    writeTextFileSync: Deno.writeTextFileSync
-}
+export const fs = {...nodeFs, ...nodeFs.promises};
 
 interface Env {
     get(key: string): string | undefined;
