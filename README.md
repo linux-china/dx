@@ -44,7 +44,7 @@ Then run `dx demo.ts`.
 # functions and variables
 
 ```typescript
-import {$, cd, pwd, question, os, fs, env} from "./mod.ts";
+import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china/dx/mod.ts";
 ```
 
 * cd: change current working directory. `cd('../')` or `cd('~/')`
