@@ -26,7 +26,7 @@ export async function $(pieces: TemplateStringsArray, ...args: Array<unknown>): 
         stderr: "piped"
     });
     // @ts-ignore
-    await p.stdin.write(textEncoder.encode("set -euo pipefail;" + compiled));
+    await p.stdin.write(textEncoder.encode($.prefix + compiled));
     // @ts-ignore
     await p.stdin.close();
     const [status, stdout, stderr] = await Promise.all([
@@ -47,6 +47,7 @@ export async function $(pieces: TemplateStringsArray, ...args: Array<unknown>): 
 }
 
 $.shell = "bash";
+$.prefix = "set -euo pipefail;";
 
 export function cd(path: string) {
     if (path.startsWith("~")) {
