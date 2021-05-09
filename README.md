@@ -87,21 +87,17 @@ import {red, yellow, blue, green} from "https://deno.land/std@0.95.0/fmt/colors.
 console.log(green("Hello"));
 ```
 
-# fs package
+# $ configuration
 
-Not similar to zx, just group Deno's file related APIs into fs object
+$.shell and $.prefix are same to zx
 
-# os package
+# packages
 
-Similar to zx
+fs and os packages are same to zx, and use fs and os modules from https://deno.land/std@0.95.0/node
 
-# $.shell
+# Misc
 
-Same with zx
-
-# $.prefix
-
-Same with zx, and default value is `set -euo pipefail;`
+* .env auto load
 
 # References
 
