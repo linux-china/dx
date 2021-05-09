@@ -60,6 +60,18 @@ export function pwd(): string {
     return Deno.cwd();
 }
 
+export function echo(obj: string | object | Uint8Array | null | undefined) {
+    if (obj) {
+        if (obj.constructor === Uint8Array) {
+            console.log(textDecoder.decode(obj))
+        } else if (typeof obj === 'string') {
+            console.log(obj);
+        } else {
+            console.log(JSON.stringify(obj));
+        }
+    }
+}
+
 export async function question(prompt: string) {
     Deno.stdout.write(textEncoder.encode(prompt));
     for await (const line of readLines(Deno.stdin)) {
