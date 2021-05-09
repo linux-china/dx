@@ -18,6 +18,8 @@ deno install -A --unstable -n dx https://denopkg.com/linux-china/dx/cli.ts
 # Demo
 
 ```typescript
+#!/usr/bin/env dx
+
 import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china/dx/mod.ts";
 import {red, yellow, blue, green} from "https://deno.land/std@0.95.0/fmt/colors.ts";
 
@@ -39,7 +41,7 @@ let json = await fetch('https://httpbin.org/ip').then(resp => resp.json());
 console.log("Your ip: ", json.origin)
 ```
 
-Then run `dx demo.ts`.
+Then run `dx demo.ts` or `chmod u+x demo.ts ; ./demo.ts`'
 
 # functions and variables
 
