@@ -98,6 +98,7 @@ fs and os packages are same to zx, and use fs and os modules from https://deno.l
 # Misc
 
 * .env auto load
+* Compile script into executable binary: `deno compile --unstable -A --lite demo.ts`
 
 # References
 
