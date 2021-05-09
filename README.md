@@ -7,7 +7,7 @@ zx is based on Deno and with following pros:
 
 * TypeScript friendly
 * Easy to import third party modules, just `import {red, green} from "https://deno.land/std@0.95.0/fmt/colors.ts"`, no idea about zx to import third party npm(package.json???)
-* I ❤️ Deno  :) 
+* I ❤️ Deno  :)
 
 # Demo
 
@@ -43,6 +43,7 @@ import {$, cd, pwd, question, os, fs, env} from "./mod.ts";
 
 * cd: change current working directory. `cd('../')` or `cd('~/')`
 * pwd: get current working directory
+* echo:  dump object as text on terminal
 * question: read value from stdin with prompt
 * os: OS related functions
 * fs: file system related functions
