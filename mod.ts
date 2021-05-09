@@ -13,13 +13,20 @@ interface ProcessOutput {
     readonly stderr: string
 }
 
+interface CmdContext {
+    (pieces: TemplateStringsArray, ...args: string[]): Promise<string>
+
+    shell: string
+    prefix: string
+}
+
 /**
  * execute given command
  *
  * @throws {ProcessOutput} ProcessOutput's exception if exit code is not 0
- * @return {string} stdout as string if exit code is 0
+ * @return {Promise<string>} stdout as string if exit code is 0
  */
-export async function $(pieces: TemplateStringsArray, ...args: Array<unknown>): Promise<string> {
+export const $: CmdContext = async function (pieces: TemplateStringsArray, ...args: Array<unknown>): Promise<string> {
     let compiled = pieces[0], i = 0;
     for (; i < args.length; i++) compiled += args[i] + pieces[i + 1];
     for (++i; i < pieces.length; i++) compiled += pieces[i];
