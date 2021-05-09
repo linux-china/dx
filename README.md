@@ -1,9 +1,39 @@
 dx: A tool for writing better scripts with Deno
 ==========================================
 
-# 为何要创建一个dx，zx不就行了吗？
+# why a dx instead of zx
 
-Google zx是基于Node.js的，而dx是基于Deno，这两者核心的区别就是加载第三方开发包的方式不一样，zx目前不能加载第三方开发包(没有package.json文件)， 而dx则没有问题，直接import Deno开发包就可以。
+zx is based on Deno and with following pros:
+
+* TypeScript friendly
+* Easy to import third party modules, just `import {red, green} from "https://deno.land/std@0.95.0/fmt/colors.ts"`, no idea about zx to import third party npm(package.json???)
+* I ❤️ Deno  :) 
+
+# Demo
+
+```typescript
+import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china/dx/mod.ts";
+import {red, yellow, blue, green} from "https://deno.land/std@0.95.0/fmt/colors.ts";
+
+// prompt to input your name
+let name = await question(blue("what's your name: "));
+console.log("Hello ", blue(name ?? "guest"));
+
+console.log("Current working directory:", pwd());
+
+// current file count
+const output = await $`ls -1 | wc -l`;
+console.log("Files count: ", parseInt(output));
+
+// your home dir
+console.log("Your home: ", os.homedir());
+
+// print your internet outbound ip
+let json = await fetch('https://httpbin.org/ip').then(resp => resp.json());
+console.log("Your ip: ", json.origin)
+```
+
+Then run `deno run -A demo.ts`.
 
 # functions and variables
 
@@ -20,14 +50,14 @@ import {$, cd, pwd, question, os, fs, env} from "./mod.ts";
 
 # execute command
 
-使用zx标准的 $`command` 完全一致，如下：
+Same with zx, example as following:
 
 ```typescript
 let count = parseInt(await $`ls -1 | wc -l`)
 console.log(`Files count: ${count}`)
 ```
 
-**注意:**: 如果命令行执行结果为非0，则会抛出ProcessOutput异常，和zx标准一致。
+**Attention:**: if exit code is not 0, and exception will be thrown.
 
 ```typescript
 try {
@@ -40,7 +70,7 @@ try {
 
 # color output
 
-Deno官方std开发包已经提供了`fmt/colors.ts`来进行文本的颜色输出，所以我们不再需要chalk啦。 样例代码如下：
+Deno std has `fmt/colors.ts` already, and you don't need chalk for simple cases.
 
 ```typescript
 import {red, yellow, blue, green} from "https://deno.land/std@0.95.0/fmt/colors.ts";
@@ -50,19 +80,19 @@ console.log(green("Hello"));
 
 # fs package
 
-这个其实就是将Deno中和文件系统相关的API进行一个归类。
+Not similar to zx, just group Deno's file related APIs into fs object
 
 # os package
 
-这个和zx类似
+Similar to zx
 
 # $.shell
 
-这是脚本使用的shell，默认为bash，你可以通过`wich bash`获取bash的路径地址
+Same with zx
 
 # $.prefix
 
-在每一个运行的命令行添加一个前缀，默认为 `set -euo pipefail;`
+Same with zx, and default value is `set -euo pipefail;`
 
 # References
 
