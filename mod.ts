@@ -8,6 +8,32 @@ export * as os from 'https://deno.land/std@0.95.0/node/os.ts';
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
 
+declare global {
+    const HOME: string;
+    const SHELL: string;
+    const PATH: string;
+    const TERM: string;
+    const TMPDIR: string;
+    const USER: string;
+    const IFS: string;
+    const PS1: string;
+    const PS2: string;
+}
+
+Object.assign(window, Deno.env.toObject());
+
+interface Env {
+    get(key: string): string | undefined;
+
+    set(key: string, value: string): void;
+
+    delete(key: string): void;
+
+    toObject(): { [index: string]: string; }
+}
+
+export const env = Deno.env as Env;
+
 interface ProcessOutput {
     readonly exitCode: number
     readonly stdout: string
@@ -93,14 +119,3 @@ export async function question(prompt: string) {
 
 export const fs = {...nodeFs, ...nodeFs.promises};
 
-interface Env {
-    get(key: string): string | undefined;
-
-    set(key: string, value: string): void;
-
-    delete(key: string): void;
-
-    toObject(): { [index: string]: string; }
-}
-
-export const env = Deno.env as Env;
