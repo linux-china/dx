@@ -29,7 +29,7 @@ console.log("Hello ", blue(name ?? "guest"));
 
 console.log("Current working directory:", pwd());
 
-// current file count
+// language=bash count files
 const output = await $`ls -1 | wc -l`;
 console.log("Files count: ", parseInt(output));
 
@@ -56,6 +56,12 @@ import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china
 * os: OS related functions
 * fs: file system related functions
 * env: env variables
+* Support to treat shell env variables as global variables in TypeScript
+
+```typescript
+const output = await $`ls -al  ${HOME}`;
+console.log(HOME);
+```
 
 # execute command
 
@@ -99,6 +105,12 @@ fs and os packages are same to zx, and use fs and os modules from https://deno.l
 
 * .env auto load
 * Compile script into executable binary: `deno compile --unstable -A --lite demo.ts`
+* Tip: please add `// language=bash ` for the shell command in JetBrains IDE :) 
+
+```typescript
+// language=bash  list files from home
+const output = await $`ls -al  ${HOME}`;
+```
 
 # References
 
