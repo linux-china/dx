@@ -111,12 +111,9 @@ fs and os packages are same to zx, and use fs and os modules from https://deno.l
 
 * .env auto load
 * Compile script into executable binary: `deno compile --unstable -A --lite demo.ts`
-* Tip: please add `// language=bash ` for the shell command in JetBrains IDE :) 
+* Language Injections in WebStorm:  Settings -> Editor -> Language Injections, and add "JS Tagged Literal Injection" as following:  
 
-```typescript
-// language=bash  list files from home
-const output = await $`ls -al  ${HOME}`;
-```
+![Language Injections in WebStorm](./docs/webstorm-dx-settings.png)
 
 # References
 
