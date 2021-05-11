@@ -7,7 +7,7 @@ zx is based on Deno and with following pros:
 
 * TypeScript friendly
 * Easy to import third party modules, just `import {red, green} from "https://deno.land/std@0.95.0/fmt/colors.ts"`, no idea about zx to import third party npm(package.json???)
-* I ❤️ Deno  :)
+* I ❤️ 🦕 
 
 # Install
 
