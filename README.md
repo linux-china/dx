@@ -59,8 +59,14 @@ import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china
 * Support to treat shell env variables as global variables in TypeScript
 
 ```typescript
+// builtin env variables for hint, such as USER, HOME, PATH
 const output = await $`ls -al  ${HOME}`;
 console.log(HOME);
+
+// custom env variables for hint
+declare global {
+    const JAVA_HOME: string;
+}
 ```
 
 # execute command
