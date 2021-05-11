@@ -29,13 +29,11 @@ console.log("Hello ", blue(name ?? "guest"));
 
 console.log("Current working directory:", pwd());
 console.log("Your home:", HOME);
+console.log("Your name:", USER);
 
 // language=bash count files
 const output = await $`ls -1 | wc -l`;
 console.log("Files count: ", parseInt(output));
-
-// your home dir
-console.log("Your home: ", os.homedir());
 
 // print your internet outbound ip
 let json = await fetch('https://httpbin.org/ip').then(resp => resp.json());
