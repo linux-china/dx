@@ -28,6 +28,7 @@ let name = await question(blue("what's your name: "));
 console.log("Hello ", blue(name ?? "guest"));
 
 console.log("Current working directory:", pwd());
+console.log("Your home:", HOME);
 
 // language=bash count files
 const output = await $`ls -1 | wc -l`;
