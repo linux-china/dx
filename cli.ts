@@ -12,8 +12,11 @@ async function dxCli(): Promise<void> {
     } else if (firstArg.startsWith('http://') || firstArg.startsWith('https://')) {
         await import(firstArg)
     } else {
-        console.log("cwd", Deno.cwd());
-        await import((join(Deno.cwd(), firstArg)))
+        let filePath: string = join(Deno.cwd(), firstArg);
+        if (!filePath.startsWith("file://")) {
+            filePath = "file://" + filePath;
+        }
+        await import(filePath)
     }
 }
 
