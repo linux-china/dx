@@ -1,4 +1,4 @@
-import {join} from 'https://deno.land/std@0.95.0/path/mod.ts'
+import {join} from 'https://deno.land/std@0.96.0/path/mod.ts'
 
 async function dxCli(): Promise<void> {
     let firstArg = Deno.args[0]

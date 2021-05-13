@@ -1,9 +1,9 @@
-import {readLines} from "https://deno.land/std@0.95.0/io/bufio.ts";
-import * as os from 'https://deno.land/std@0.95.0/node/os.ts';
-import * as nodeFs from 'https://deno.land/std@0.95.0/node/fs.ts';
+import {readLines} from "https://deno.land/std@0.96.0/io/bufio.ts";
+import * as os from 'https://deno.land/std@0.96.0/node/os.ts';
+import * as nodeFs from 'https://deno.land/std@0.96.0/node/fs.ts';
 import "https://deno.land/x/dotenv/load.ts";
 
-export * as os from 'https://deno.land/std@0.95.0/node/os.ts';
+export * as os from 'https://deno.land/std@0.96.0/node/os.ts';
 
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
