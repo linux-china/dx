@@ -53,6 +53,7 @@ import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china
 * echo:  dump object as text on terminal
 * printf:  format output
 * question: read value from stdin with prompt
+* sleep: `await sleep(5);`  
 * os: OS related functions
 * fs: file system related functions
 * env: env variables
