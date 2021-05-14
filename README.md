@@ -51,6 +51,7 @@ import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china
 * cd: change current working directory. `cd('../')` or `cd('~/')`
 * pwd: get current working directory
 * echo:  dump object as text on terminal
+* printf:  format output
 * question: read value from stdin with prompt
 * os: OS related functions
 * fs: file system related functions
