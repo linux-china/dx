@@ -1,4 +1,5 @@
 import {readLines} from "https://deno.land/std@0.96.0/io/bufio.ts";
+import {delay} from "https://deno.land/std@0.96.0/async/mod.ts";
 import * as os from 'https://deno.land/std@0.96.0/node/os.ts';
 import * as nodeFs from 'https://deno.land/std@0.96.0/node/fs.ts';
 import "https://deno.land/x/dotenv/load.ts";
@@ -112,9 +113,27 @@ export function echo(obj: string | object | Uint8Array | null | undefined) {
 }
 
 export async function question(prompt: string) {
-    Deno.stdout.write(textEncoder.encode(prompt));
+    await Deno.stdout.write(textEncoder.encode(prompt));
     for await (const line of readLines(Deno.stdin)) {
         return line;
+    }
+}
+
+export async function sleep(interval: string | number) {
+    if (typeof interval === "number") {
+        return delay(interval);
+    } else {
+        let unit = interval.substring(interval.length - 1, interval.length);
+        let count = parseFloat(interval.substring(0, interval.length - 1));
+        if (unit === "m") {
+            return delay(count * 60);
+        } else if (unit == "h") {
+            return delay(count * 3600);
+        } else if (unit == "d") {
+            return delay(count * 24 * 3600)
+        } else {
+            return delay(count);
+        }
     }
 }
 
