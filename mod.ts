@@ -119,6 +119,15 @@ export async function question(prompt: string) {
     }
 }
 
+/**
+ * read text file as string
+ *
+ * @param fileName file name
+ */
+export function cat(fileName: string): string {
+    return Deno.readTextFileSync(fileName);
+}
+
 export async function sleep(interval: string | number) {
     if (typeof interval === "number") {
         return delay(interval);
