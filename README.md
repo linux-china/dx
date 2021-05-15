@@ -75,9 +75,10 @@ import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china
 * pwd: get current working directory
 * echo:  dump object as text on terminal
 * printf:  format output
+* getops:  grab arguments
 * alias: `alias("ll", "ls -al")`  
 * cat:  read text file as string
-* question: read value from stdin with prompt
+* read/question: read value from stdin with prompt
 * sleep: `await sleep(5);`
 * os: OS related functions
 * fs: file system related functions
