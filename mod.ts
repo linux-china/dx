@@ -61,6 +61,7 @@ interface CmdContext {
     export: (name: string, value: string) => void;
     alias: (name: string, value: string) => void;
 
+    // deno-lint-ignore no-explicit-any
     [name: string]: any
 }
 
@@ -91,8 +92,8 @@ export const $: CmdContext = async function (pieces: TemplateStringsArray, ...ar
         await p.stdin?.write(textEncoder.encode(expandAliases + aliases.join(" ") + "\n"));
     }
     // env variables
-    let envDeclares = Object.entries(env.toObject()).map((pair, index) => {
-        return `${pair[0]}="${pair[1]}";`
+    const envDeclares = Object.entries(env.toObject()).map((pair) => {
+        return `${pair[0]}="${pair[1]}";`;
     }).join(" ");
     await p.stdin?.write(textEncoder.encode(envDeclares + "\n"));
     await p.stdin?.write(textEncoder.encode($.prefix + compiled));
@@ -135,7 +136,7 @@ export const $a = async function* (pieces: TemplateStringsArray, ...args: Array<
         await p.stdin?.write(textEncoder.encode(expandAliases + aliases.join(" ") + "\n"));
     }
     // env variables
-    let envDeclares = Object.entries(env.toObject()).map((pair, index) => {
+    const envDeclares = Object.entries(env.toObject()).map((pair) => {
         return `${pair[0]}="${pair[1]}";`
     }).join(" ");
     await p.stdin?.write(textEncoder.encode(envDeclares + "\n"));
@@ -148,10 +149,10 @@ export const $a = async function* (pieces: TemplateStringsArray, ...args: Array<
     ]);
     p.close();
     if (status.code === 0) {
-        let output = textDecoder.decode(await stdout);
-        let lines = output.match(/[^\r\n]+/g);
+        const output = textDecoder.decode(await stdout);
+        const lines = output.match(/[^\r\n]+/g);
         if (lines) {
-            for (let line of lines) {
+            for (const line of lines) {
                 if (line) {
                     yield line
                 }
@@ -189,7 +190,10 @@ export function pwd(): string {
 export const echo = console.log;
 
 export async function question(prompt: string) {
-    return read(prompt);
+    await Deno.stdout.write(textEncoder.encode(prompt));
+    for await (const line of readLines(Deno.stdin)) {
+        return line;
+    }
 }
 
 export async function read(prompt: string) {
@@ -208,29 +212,29 @@ export function cat(fileName: string): string {
     return Deno.readTextFileSync(fileName);
 }
 
-export async function sleep(interval: string | number) {
+export async function sleep(interval: string | number): Promise<void> {
     if (typeof interval === "number") {
-        return delay(interval);
+        return await delay(interval);
     } else {
-        let unit = interval.substring(interval.length - 1, interval.length);
-        let count = parseFloat(interval.substring(0, interval.length - 1));
+        const unit = interval.substring(interval.length - 1, interval.length);
+        const count = parseFloat(interval.substring(0, interval.length - 1));
         if (unit === "m") {
-            return delay(count * 60);
+            return await delay(count * 60);
         } else if (unit == "h") {
-            return delay(count * 3600);
+            return await delay(count * 3600);
         } else if (unit == "d") {
-            return delay(count * 24 * 3600)
+            return await delay(count * 24 * 3600)
         } else {
-            return delay(count);
+            return await delay(count);
         }
     }
 }
 
 export async function* glob(pattern: string) {
-    let output = await $`ls -1 ${pattern}`
-    let lines = output.match(/[^\r\n]+/g);
+    const output = await $`ls -1 ${pattern}`
+    const lines = output.match(/[^\r\n]+/g);
     if (lines) {
-        for (let line of lines) {
+        for (const line of lines) {
             if (line) {
                 yield line
             }
@@ -239,9 +243,9 @@ export async function* glob(pattern: string) {
 }
 
 export function getops(keys?: string): { [name: string]: string } {
-    let pairs = parse(Deno.args);
+    const pairs = parse(Deno.args);
     if (keys) {
-        let temp: { [name: string]: string } = {}
+        const temp: { [name: string]: string } = {}
         keys.split(":").forEach(key => {
             if (key in pairs) {
                 temp[key] = pairs[key];
@@ -253,15 +257,15 @@ export function getops(keys?: string): { [name: string]: string } {
 }
 
 export function test(expression: string): boolean {
-    let pairs = expression.split(" ", 2);
-    let condition = pairs[0];
-    let fileName = pairs[1];
-    let exists = stdFs.existsSync(fileName);
+    const pairs = expression.split(" ", 2);
+    const condition = pairs[0];
+    const fileName = pairs[1];
+    const exists = stdFs.existsSync(fileName);
     if (!exists) return false;
-    let fileInfo: Deno.FileInfo = Deno.statSync(fileName);
-    let uid = parseInt(env.get("UID") ?? "0");
-    let gid = parseInt(env.get("GID") ?? "0");
-    let fileMode = fileInfo.mode ?? 0;
+    const fileInfo: Deno.FileInfo = Deno.statSync(fileName);
+    const uid = parseInt(env.get("UID") ?? "0");
+    const gid = parseInt(env.get("GID") ?? "0");
+    const fileMode = fileInfo.mode ?? 0;
     switch (condition) {
         case '-e':
             return exists;
@@ -301,10 +305,10 @@ export const fs = {...nodeFs, ...nodeFs.promises};
 Object.assign(window, Deno.env.toObject());
 
 // shell parameters to global, from $0 to $9
-let args: { [name: string]: string } = {};
+const args: { [name: string]: string } = {};
 if (Deno.mainModule.endsWith("/dx/cli.ts")) { // launched by dx, such as `./demo.ts xx`
     Deno.args.forEach(function (value, i) {
-        let key = "$" + i.toString();
+        const key = "$" + i.toString();
         args[key] = value;
     });
     $['@'] = Deno.args.slice(1);
@@ -313,7 +317,7 @@ if (Deno.mainModule.endsWith("/dx/cli.ts")) { // launched by dx, such as `./demo
 } else { // launched by deno, such as `deno run -A --unstable demo.ts xx`
     args["$0"] = Deno.mainModule;
     Deno.args.forEach(function (value, i) {
-        let key = "$" + (i + 1).toString();
+        const key = "$" + (i + 1).toString();
         args[key] = value;
     });
     $['@'] = Deno.args;

@@ -1,7 +1,7 @@
 import {join} from 'https://deno.land/std@0.96.0/path/mod.ts'
 
 async function dxCli(): Promise<void> {
-    let firstArg = Deno.args[0]
+    const firstArg = Deno.args[0]
     if (['-v', '-V', '--version'].includes(firstArg)) {
         console.log(`dx version 0.1.0`)
         Deno.exit(0)
