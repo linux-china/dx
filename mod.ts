@@ -103,9 +103,9 @@ export const $: CmdContext = async function (pieces: TemplateStringsArray, ...ar
         } else if ($.shell.endsWith("zsh")) {
             expandAliases = "setopt aliases;";
         }
-        await p.stdin?.write(textEncoder.encode(expandAliases + aliases.join("\n") + "\n"));
+        await p.stdin?.write(textEncoder.encode(expandAliases + aliases.join(" ") + "\n"));
     }
-    await p.stdin?.write(textEncoder.encode($.prefix + aliases.join(" ") + compiled));
+    await p.stdin?.write(textEncoder.encode($.prefix + compiled));
     await p.stdin?.close();
     const [status, stdout, stderr] = await Promise.all([
         p.status(),
@@ -141,7 +141,7 @@ export const $1 = async function* (pieces: TemplateStringsArray, ...args: Array<
         } else if ($.shell.endsWith("zsh")) {
             expandAliases = "setopt aliases;";
         }
-        await p.stdin?.write(textEncoder.encode(expandAliases + aliases.join("\n") + "\n"));
+        await p.stdin?.write(textEncoder.encode(expandAliases + aliases.join(" ") + "\n"));
     }
     await p.stdin?.write(textEncoder.encode($.prefix + compiled));
     await p.stdin?.close();
