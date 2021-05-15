@@ -3,6 +3,7 @@ import {delay} from "https://deno.land/std@0.96.0/async/mod.ts";
 import {parse} from "https://deno.land/std@0.96.0/flags/mod.ts";
 import * as os from 'https://deno.land/std@0.96.0/node/os.ts';
 import * as nodeFs from 'https://deno.land/std@0.96.0/node/fs.ts';
+import * as stdFs from "https://deno.land/std@0.96.0/fs/mod.ts";
 import "https://deno.land/x/dotenv/load.ts";
 
 export * as os from 'https://deno.land/std@0.96.0/node/os.ts';
@@ -236,6 +237,49 @@ export function getops(keys?: string): { [name: string]: string } {
     return pairs;
 }
 
+export function test(expression: string): boolean {
+    let pairs = expression.split(" ", 2);
+    let condition = pairs[0];
+    let fileName = pairs[1];
+    let exists = stdFs.existsSync(fileName);
+    if (!exists) return false;
+    let fileInfo: Deno.FileInfo = Deno.statSync(fileName);
+    let uid = parseInt(env.get("UID") ?? "0");
+    let gid = parseInt(env.get("GID") ?? "0");
+    let fileMode = fileInfo.mode ?? 0;
+    switch (condition) {
+        case '-e':
+            return exists;
+        case '-f':
+            return fileInfo.isFile;
+        case '-d':
+            return fileInfo.isDirectory;
+        case '-s':
+            return fileInfo.isFile && fileInfo.size > 0;
+        case '-h':
+            return fileInfo.isSymlink;
+        case '-L':
+            return fileInfo.isSymlink;
+        case '-O':
+            return fileInfo.uid === uid;
+        case '-G':
+            return fileInfo.gid === gid;
+        case '-r':
+            return (fileInfo.uid === uid && (fileMode & 0b100000000) > 0)
+                || (fileInfo.gid === gid && (fileMode & 0b000100000) > 0)
+                || (fileInfo.uid !== uid && fileInfo.gid !== gid && (fileMode & 0b000000100) > 0);
+        case '-w':
+            return (fileInfo.uid === uid && (fileMode & 0b010000000) > 0)
+                || (fileInfo.gid === gid && (fileMode & 0b000010000) > 0)
+                || (fileInfo.uid !== uid && fileInfo.gid !== gid && (fileMode & 0b000000010) > 0);
+        case '-x':
+            return (fileInfo.uid === uid && (fileMode & 0b001000000) > 0)
+                || (fileInfo.gid === gid && (fileMode & 0b0000001000) > 0)
+                || (fileInfo.uid !== uid && fileInfo.gid !== gid && (fileMode & 0b000000001) > 0);
+    }
+    return false;
+}
+
 export const fs = {...nodeFs, ...nodeFs.promises};
 
 // env variables to global
@@ -249,7 +293,7 @@ if (Deno.mainModule.endsWith("/dx/cli.ts")) { // launched by dx, such as `./demo
         args[key] = value;
     });
     $['@'] = Deno.args.slice(1);
-    $['#'] = Deno.args.length-1;
+    $['#'] = Deno.args.length - 1;
     $['*'] = Deno.args.slice(1).join(" ");
 } else { // launched by deno, such as `deno run -A --unstable demo.ts xx`
     args["$0"] = Deno.mainModule;
@@ -262,5 +306,11 @@ if (Deno.mainModule.endsWith("/dx/cli.ts")) { // launched by dx, such as `./demo
     $['*'] = Deno.args.join(" ");
 }
 Object.assign(window, args);
+
+//hooks
+if (!env.get("UID")) {
+    env.set("UID", await $`id -u`);
+    env.set("GID", await $`id -g`);
+}
 
 
