@@ -57,6 +57,15 @@ import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china
 * sleep: `await sleep(5);`  
 * os: OS related functions
 * fs: file system related functions
+* glob:  glob files, like commands `ls -1 *.ts`
+  
+```typescript
+// 
+for await (const fileName of glob("*.ts")) {
+    console.log(fileName);
+}
+```
+
 * env: env variables
 * Support to treat shell env variables as global variables in TypeScript
 
