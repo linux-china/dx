@@ -1,4 +1,4 @@
-import {$, cd, pwd, question, os, fs, env, printf, glob, $1, alias,echo} from "./mod.ts";
+import {$, cd, pwd, question, os, fs, env, printf, glob, $_, alias,echo} from "./mod.ts";
 import {red, yellow, blue, green} from "https://deno.land/std@0.95.0/fmt/colors.ts";
 
 // aliases
@@ -18,12 +18,12 @@ const output = await $`ls -1 | wc -l`;
 echo("Files count: ", parseInt(output));
 
 // output as lines
-for await (const fileName of $1`ls -1 *.ts`) {
+for await (const fileName of $_`ls -1 *.ts`) {
     echo("TS file: ", fileName);
 }
 
 // alias and output as lines
-for await (const fileName of $1`ll *.ts`) {
+for await (const fileName of $_`ll *.ts`) {
     echo("TS file: ", fileName);
 }
 
