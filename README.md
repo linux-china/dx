@@ -30,10 +30,11 @@ alias("ll", "ls -al");
 let name = await question(blue("what's your name: "));
 echo("Hello ", blue(name ?? "guest"));
 
-// pwd() and env variables
+// pwd(), env variables and params
 echo("Current working directory:", pwd());
 echo("Your home:", HOME);
 echo("Your name:", USER);
+echo("Script name:", $0);
 
 // current file count
 const output = await $`ls -1 | wc -l`;
