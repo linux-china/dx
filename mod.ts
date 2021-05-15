@@ -50,36 +50,6 @@ interface CmdContext {
     prefix: string
 }
 
-async function executeCommand(pieces: TemplateStringsArray, ...args: Array<unknown>) {
-    let compiled = pieces[0], i = 0;
-    for (; i < args.length; i++) compiled += args[i] + pieces[i + 1];
-    for (++i; i < pieces.length; i++) compiled += pieces[i];
-    const p = Deno.run({
-        cmd: [$.shell],
-        stdin: "piped",
-        stdout: "piped",
-        stderr: "piped"
-    });
-    if (aliases) {
-        let expandAliases = ""
-        if ($.shell.endsWith("bash")) {
-            expandAliases = "shopt -s expand_aliases;"
-        } else if ($.shell.endsWith("zsh")) {
-            expandAliases = "setopt aliases;";
-        }
-        await p.stdin?.write(textEncoder.encode(expandAliases + aliases.join("\n") + "\n"));
-    }
-    await p.stdin?.write(textEncoder.encode($.prefix + aliases.join(" ") + compiled));
-    await p.stdin?.close();
-    const [status, stdout, stderr] = await Promise.all([
-        p.status(),
-        p.output(),
-        p.stderrOutput()
-    ]);
-    p.close();
-    return [status, stdout, stderr];
-}
-
 /**
  * execute given command
  *
@@ -184,17 +154,7 @@ export function pwd(): string {
     return Deno.cwd();
 }
 
-export function echo(obj: string | object | Uint8Array | null | undefined) {
-    if (obj) {
-        if (obj.constructor === Uint8Array) {
-            console.log(textDecoder.decode(obj))
-        } else if (typeof obj === 'string') {
-            console.log(obj);
-        } else {
-            console.log(JSON.stringify(obj));
-        }
-    }
-}
+export const echo = console.log;
 
 export async function question(prompt: string) {
     await Deno.stdout.write(textEncoder.encode(prompt));
