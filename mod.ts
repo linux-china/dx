@@ -121,7 +121,7 @@ export const $: CmdContext = async function (pieces: TemplateStringsArray, ...ar
     }
 }
 
-export const $_ = async function* (pieces: TemplateStringsArray, ...args: Array<unknown>) {
+export const $a = async function* (pieces: TemplateStringsArray, ...args: Array<unknown>) {
     let compiled = pieces[0], i = 0;
     for (; i < args.length; i++) compiled += args[i] + pieces[i + 1];
     for (++i; i < pieces.length; i++) compiled += pieces[i];
