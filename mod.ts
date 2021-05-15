@@ -69,7 +69,6 @@ async function executeCommand(pieces: TemplateStringsArray, ...args: Array<unkno
     let compiled = pieces[0], i = 0;
     for (; i < args.length; i++) compiled += args[i] + pieces[i + 1];
     for (++i; i < pieces.length; i++) compiled += pieces[i];
-    console.log("compiled: ", compiled)
     const p = Deno.run({
         cmd: [$.shell],
         stdin: "piped",
