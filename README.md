@@ -7,7 +7,7 @@ dx is based on Deno and with following pros:
 
 * TypeScript friendly
 * Easy to import third party modules, just `import {red, green} from "https://deno.land/std@0.95.0/fmt/colors.ts"`, no idea about zx to import third party npm(package.json???)
-* I ❤️ 🦕 
+* I ❤️ 🦕
 
 # Install
 
@@ -54,11 +54,11 @@ import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china
 * printf:  format output
 * cat:  read text file as string
 * question: read value from stdin with prompt
-* sleep: `await sleep(5);`  
+* sleep: `await sleep(5);`
 * os: OS related functions
 * fs: file system related functions
 * glob:  glob files, like commands `ls -1 *.ts`
-  
+
 ```typescript
 // 
 for await (const fileName of glob("*.ts")) {
@@ -100,6 +100,16 @@ try {
 }
 ```
 
+# execute command and convert output into lines
+
+If you want to convert output into lines, and you can use `$1`, then use `for await...of` to iterate the lines.
+
+```typescript
+for await (const fileName of $1`ls -1 *.ts`) {
+    console.log("file: ", fileName);
+}
+```
+
 # color output
 
 Deno std has `fmt/colors.ts` already, and you don't need chalk for simple cases.
@@ -122,7 +132,7 @@ fs and os packages are same to zx, and use fs and os modules from https://deno.l
 
 * .env auto load
 * Compile script into executable binary: `deno compile --unstable -A --lite demo.ts`
-* Language Injections in WebStorm:  Settings -> Editor -> Language Injections, and add "JS Tagged Literal Injection" as following:  
+* Language Injections in WebStorm:  Settings -> Editor -> Language Injections, and add "JS Tagged Literal Injection" as following:
 
 ![Language Injections in WebStorm](./docs/webstorm-dx-settings.png)
 
