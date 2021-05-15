@@ -20,11 +20,11 @@ deno install -A --unstable -r -f -n dx https://denopkg.com/linux-china/dx/cli.ts
 
 ```typescript
 #!/usr/bin/env dx
-import {$, cd, pwd, question, os, fs, env, printf, glob, $a, alias, echo} from "./mod.ts";
+import {$, cd, pwd, question, os, fs, env, printf, glob, $a, echo} from "./mod.ts";
 import {red, yellow, blue, green} from "https://deno.land/std@0.96.0/fmt/colors.ts";
 
 // aliases
-alias("ll", "ls -al");
+$.alias("ll", "ls -al");
 
 // prompt to input your name
 let name = await question(blue("what's your name: "));
@@ -77,7 +77,8 @@ import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china
 * printf:  format output
 * getops:  grab arguments
 * test: single file test only, such as `test('-e mod.ts')'`  
-* alias: `alias("ll", "ls -al")`
+* $.alias: introduce alias for command. `$.alias("ll", "ls -al")`
+* $.export: export env variable for command.  `$.expoort('ADMIN','xx');`  
 * cat:  read text file as string
 * read/question: read value from stdin with prompt
 * sleep: `await sleep(5);`
