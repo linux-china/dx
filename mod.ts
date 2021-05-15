@@ -65,16 +65,11 @@ interface CmdContext {
     [name: string]: any
 }
 
-/**
- * execute given command
- *
- * @throws {ProcessOutput} ProcessOutput's exception if exit code is not 0
- * @return {Promise<string>} stdout as string if exit code is 0
- */
-export const $: CmdContext = async function (pieces: TemplateStringsArray, ...args: Array<unknown>): Promise<string> {
+async function executeCommand(pieces: TemplateStringsArray, ...args: Array<unknown>): Promise<[Deno.ProcessStatus, Uint8Array, Uint8Array]> {
     let compiled = pieces[0], i = 0;
     for (; i < args.length; i++) compiled += args[i] + pieces[i + 1];
     for (++i; i < pieces.length; i++) compiled += pieces[i];
+    console.log("compiled: ", compiled)
     const p = Deno.run({
         cmd: [$.shell],
         stdin: "piped",
@@ -98,12 +93,23 @@ export const $: CmdContext = async function (pieces: TemplateStringsArray, ...ar
     await p.stdin?.write(textEncoder.encode(envDeclares + "\n"));
     await p.stdin?.write(textEncoder.encode($.prefix + compiled));
     await p.stdin?.close();
-    const [status, stdout, stderr] = await Promise.all([
+    const result = await Promise.all([
         p.status(),
         p.output(),
         p.stderrOutput()
     ]);
     p.close();
+    return result;
+}
+
+/**
+ * execute given command
+ *
+ * @throws {ProcessOutput} ProcessOutput's exception if exit code is not 0
+ * @return {Promise<string>} stdout as string if exit code is 0
+ */
+export const $: CmdContext = async function (pieces: TemplateStringsArray, ...args: Array<unknown>): Promise<string> {
+    const [status, stdout, stderr]: [Deno.ProcessStatus, Uint8Array, Uint8Array] = await executeCommand(pieces, ...args);
     if (status.code === 0) {
         return textDecoder.decode(await stdout);
     } else {
@@ -116,38 +122,7 @@ export const $: CmdContext = async function (pieces: TemplateStringsArray, ...ar
 }
 
 export const $a = async function* (pieces: TemplateStringsArray, ...args: Array<unknown>) {
-    let compiled = pieces[0], i = 0;
-    for (; i < args.length; i++) compiled += args[i] + pieces[i + 1];
-    for (++i; i < pieces.length; i++) compiled += pieces[i];
-    const p = Deno.run({
-        cmd: [$.shell],
-        stdin: "piped",
-        stdout: "piped",
-        stderr: "piped"
-    });
-    // expand aliases
-    if (aliases) {
-        let expandAliases = ""
-        if ($.shell.endsWith("bash")) {
-            expandAliases = "shopt -s expand_aliases;"
-        } else if ($.shell.endsWith("zsh")) {
-            expandAliases = "setopt aliases;";
-        }
-        await p.stdin?.write(textEncoder.encode(expandAliases + aliases.join(" ") + "\n"));
-    }
-    // env variables
-    const envDeclares = Object.entries(env.toObject()).map((pair) => {
-        return `${pair[0]}="${pair[1]}";`
-    }).join(" ");
-    await p.stdin?.write(textEncoder.encode(envDeclares + "\n"));
-    await p.stdin?.write(textEncoder.encode($.prefix + compiled));
-    await p.stdin?.close();
-    const [status, stdout, stderr] = await Promise.all([
-        p.status(),
-        p.output(),
-        p.stderrOutput()
-    ]);
-    p.close();
+    const [status, stdout, stderr]: [Deno.ProcessStatus, Uint8Array, Uint8Array] = await executeCommand(pieces, ...args);
     if (status.code === 0) {
         const output = textDecoder.decode(await stdout);
         const lines = output.match(/[^\r\n]+/g);
