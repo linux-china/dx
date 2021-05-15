@@ -165,3 +165,4 @@ fs and os packages are same to zx, and use fs and os modules from https://deno.l
 # References
 
 * Google zx: https://github.com/google/zx
+* Bash Cheatsheet: https://shellmagic.xyz/
