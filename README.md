@@ -76,6 +76,7 @@ import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china
 * echo:  dump object as text on terminal
 * printf:  format output
 * getops:  grab arguments
+* test: single file test only, such as `test('-e mod.ts')'`  
 * alias: `alias("ll", "ls -al")`
 * cat:  read text file as string
 * read/question: read value from stdin with prompt
