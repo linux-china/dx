@@ -34,25 +34,6 @@ declare global {
     const $9: string | undefined;
 }
 
-// env variables to global
-Object.assign(window, Deno.env.toObject());
-
-// shell parameters to global, from $0 to $9
-let args: { [name: string]: string } = {};
-if (Deno.mainModule.endsWith("/dx/cli.ts")) { // launched by dx, such as `./demo.ts xx`
-    Deno.args.forEach(function (value, i) {
-        let key = "$" + i.toString();
-        args[key] = value;
-    });
-} else { // launched by deno, such as `deno run -A --unstable demo.ts xx`
-    args["$0"] = Deno.mainModule;
-    Deno.args.forEach(function (value, i) {
-        let key = "$" + (i + 1).toString();
-        args[key] = value;
-    });
-}
-Object.assign(window, args);
-
 interface Env {
     get(key: string): string | undefined;
 
@@ -76,6 +57,8 @@ interface CmdContext {
 
     shell: string
     prefix: string
+
+    [name: string]: any
 }
 
 /**
@@ -170,6 +153,7 @@ export const $a = async function* (pieces: TemplateStringsArray, ...args: Array<
 
 $.shell = "bash";
 $.prefix = "set -euo pipefail;";
+$['@'] = "goood"
 
 export function cd(path: string) {
     if (path.startsWith("~")) {
@@ -253,4 +237,30 @@ export function getops(keys?: string): { [name: string]: string } {
 }
 
 export const fs = {...nodeFs, ...nodeFs.promises};
+
+// env variables to global
+Object.assign(window, Deno.env.toObject());
+
+// shell parameters to global, from $0 to $9
+let args: { [name: string]: string } = {};
+if (Deno.mainModule.endsWith("/dx/cli.ts")) { // launched by dx, such as `./demo.ts xx`
+    Deno.args.forEach(function (value, i) {
+        let key = "$" + i.toString();
+        args[key] = value;
+    });
+    $['@'] = Deno.args.slice(1);
+    $['#'] = Deno.args.length-1;
+    $['*'] = Deno.args.slice(1).join(" ");
+} else { // launched by deno, such as `deno run -A --unstable demo.ts xx`
+    args["$0"] = Deno.mainModule;
+    Deno.args.forEach(function (value, i) {
+        let key = "$" + (i + 1).toString();
+        args[key] = value;
+    });
+    $['@'] = Deno.args;
+    $['#'] = Deno.args;
+    $['*'] = Deno.args.join(" ");
+}
+Object.assign(window, args);
+
 
