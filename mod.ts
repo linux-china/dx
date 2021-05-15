@@ -86,6 +86,45 @@ export const $: CmdContext = async function (pieces: TemplateStringsArray, ...ar
     }
 }
 
+export const $1 = async function* (pieces: TemplateStringsArray, ...args: Array<unknown>) {
+    let compiled = pieces[0], i = 0;
+    for (; i < args.length; i++) compiled += args[i] + pieces[i + 1];
+    for (++i; i < pieces.length; i++) compiled += pieces[i];
+    const p = Deno.run({
+        cmd: [$.shell],
+        stdin: "piped",
+        stdout: "piped",
+        stderr: "piped"
+    });
+    // @ts-ignore
+    await p.stdin.write(textEncoder.encode($.prefix + compiled));
+    // @ts-ignore
+    await p.stdin.close();
+    const [status, stdout, stderr] = await Promise.all([
+        p.status(),
+        p.output(),
+        p.stderrOutput()
+    ]);
+    p.close();
+    if (status.code === 0) {
+        let output = textDecoder.decode(await stdout);
+        let lines = output.match(/[^\r\n]+/g);
+        if (lines) {
+            for (let line of lines) {
+                if (line) {
+                    yield line
+                }
+            }
+        }
+    } else {
+        throw {
+            exitCode: status.code,
+            stdout: textDecoder.decode(await stdout),
+            stderr: textDecoder.decode(await stderr)
+        };
+    }
+}
+
 $.shell = "bash";
 $.prefix = "set -euo pipefail;";
 
@@ -142,6 +181,18 @@ export async function sleep(interval: string | number) {
             return delay(count * 24 * 3600)
         } else {
             return delay(count);
+        }
+    }
+}
+
+export async function* glob(pattern: string) {
+    let output = await $`ls -1 ${pattern}`
+    let lines = output.match(/[^\r\n]+/g);
+    if (lines) {
+        for (let line of lines) {
+            if (line) {
+                yield line
+            }
         }
     }
 }
