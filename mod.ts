@@ -21,9 +21,36 @@ declare global {
     const IFS: string;
     const PS1: string;
     const PS2: string;
+    const $0: string | undefined;
+    const $1: string | undefined;
+    const $2: string | undefined;
+    const $3: string | undefined;
+    const $4: string | undefined;
+    const $5: string | undefined;
+    const $6: string | undefined;
+    const $7: string | undefined;
+    const $8: string | undefined;
+    const $9: string | undefined;
 }
 
+// env variables to global
 Object.assign(window, Deno.env.toObject());
+
+// shell parameters to global, from $0 to $9
+let args: { [name: string]: string } = {};
+if (Deno.mainModule.endsWith("/dx/cli.ts")) { // launched by dx, such as `./demo.ts xx`
+    Deno.args.forEach(function (value, i) {
+        let key = "$" + i.toString();
+        args[key] = value;
+    });
+} else { // launched by deno, such as `deno run -A --unstable demo.ts xx`
+    args["$0"] = Deno.mainModule;
+    Deno.args.forEach(function (value, i) {
+        let key = "$" + (i + 1).toString();
+        args[key] = value;
+    });
+}
+Object.assign(window, args);
 
 interface Env {
     get(key: string): string | undefined;
@@ -94,7 +121,7 @@ export const $: CmdContext = async function (pieces: TemplateStringsArray, ...ar
     }
 }
 
-export const $1 = async function* (pieces: TemplateStringsArray, ...args: Array<unknown>) {
+export const $_ = async function* (pieces: TemplateStringsArray, ...args: Array<unknown>) {
     let compiled = pieces[0], i = 0;
     for (; i < args.length; i++) compiled += args[i] + pieces[i + 1];
     for (++i; i < pieces.length; i++) compiled += pieces[i];
