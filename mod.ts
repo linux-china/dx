@@ -58,6 +58,7 @@ interface CmdContext {
 
     shell: string
     prefix: string
+    export: (name: string, value: string) => void;
 
     [name: string]: any
 }
@@ -78,6 +79,7 @@ export const $: CmdContext = async function (pieces: TemplateStringsArray, ...ar
         stdout: "piped",
         stderr: "piped"
     });
+    // expand aliases
     if (aliases) {
         let expandAliases = ""
         if ($.shell.endsWith("bash")) {
@@ -87,6 +89,11 @@ export const $: CmdContext = async function (pieces: TemplateStringsArray, ...ar
         }
         await p.stdin?.write(textEncoder.encode(expandAliases + aliases.join(" ") + "\n"));
     }
+    // env variables
+    let envDeclares = Object.entries(env.toObject()).map((pair, index) => {
+        return `${pair[0]}="${pair[1]}";`
+    }).join(" ");
+    await p.stdin?.write(textEncoder.encode(envDeclares + "\n"));
     await p.stdin?.write(textEncoder.encode($.prefix + compiled));
     await p.stdin?.close();
     const [status, stdout, stderr] = await Promise.all([
@@ -116,6 +123,7 @@ export const $a = async function* (pieces: TemplateStringsArray, ...args: Array<
         stdout: "piped",
         stderr: "piped"
     });
+    // expand aliases
     if (aliases) {
         let expandAliases = ""
         if ($.shell.endsWith("bash")) {
@@ -125,6 +133,11 @@ export const $a = async function* (pieces: TemplateStringsArray, ...args: Array<
         }
         await p.stdin?.write(textEncoder.encode(expandAliases + aliases.join(" ") + "\n"));
     }
+    // env variables
+    let envDeclares = Object.entries(env.toObject()).map((pair, index) => {
+        return `${pair[0]}="${pair[1]}";`
+    }).join(" ");
+    await p.stdin?.write(textEncoder.encode(envDeclares + "\n"));
     await p.stdin?.write(textEncoder.encode($.prefix + compiled));
     await p.stdin?.close();
     const [status, stdout, stderr] = await Promise.all([
@@ -154,7 +167,9 @@ export const $a = async function* (pieces: TemplateStringsArray, ...args: Array<
 
 $.shell = "bash";
 $.prefix = "set -euo pipefail;";
-$['@'] = "goood"
+$.export = (name: string, value: string): void => {
+    env.set(name, value);
+}
 
 export function cd(path: string) {
     if (path.startsWith("~")) {
