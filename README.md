@@ -133,6 +133,8 @@ for await (const fileName of $1`ls -1 *.ts`) {
 }
 ```
 
+`$1` indicates first parameter in shell, and here it means you want to get multi lines.
+
 # color output
 
 Deno std has `fmt/colors.ts` already, and you don't need chalk for simple cases.
