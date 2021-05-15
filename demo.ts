@@ -21,9 +21,9 @@ let json = await fetch('https://httpbin.org/ip').then(resp => resp.json());
 console.log("Your ip: ", json.origin)
 
 //printf
-printf("hello %s", "world");
+printf("hello %s\n", "world");
 
 //glob *.ts
 for await (const fileName of glob("*.ts")) {
-    console.log("file: ", fileName);
+    console.log(`${pwd()}/${fileName}`);
 }
