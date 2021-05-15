@@ -20,7 +20,7 @@ deno install -A --unstable -r -f -n dx https://denopkg.com/linux-china/dx/cli.ts
 
 ```typescript
 #!/usr/bin/env dx
-import {$, cd, pwd, question, os, fs, env, printf, glob, $a, alias,echo} from "./mod.ts";
+import {$, cd, pwd, question, os, fs, env, printf, glob, $a, alias, echo} from "./mod.ts";
 import {red, yellow, blue, green} from "https://deno.land/std@0.96.0/fmt/colors.ts";
 
 // aliases
@@ -76,7 +76,7 @@ import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china
 * echo:  dump object as text on terminal
 * printf:  format output
 * getops:  grab arguments
-* alias: `alias("ll", "ls -al")`  
+* alias: `alias("ll", "ls -al")`
 * cat:  read text file as string
 * read/question: read value from stdin with prompt
 * sleep: `await sleep(5);`
@@ -92,7 +92,7 @@ for await (const fileName of glob("*.ts")) {
 ```
 
 * env: env object
-* shell params support: $0(script name), $1 to $9  
+* shell params support: $0(script name), $1 to $9, $['@'] for all arguments, $['#'] for number of arguments, $['*'] for params as a string
 * Support to treat shell env variables as global variables in TypeScript
 
 ```typescript
