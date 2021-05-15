@@ -8,7 +8,10 @@ alias("ll", "ls -al");
 let name = await question(blue("what's your name: "));
 console.log("Hello ", blue(name ?? "guest"));
 
+// pwd() and env variables
 console.log("Current working directory:", pwd());
+console.log("Your home:", HOME);
+console.log("Your name:", USER);
 
 // current file count
 const output = await $`ls -1 | wc -l`;
@@ -19,7 +22,7 @@ for await (const fileName of $1`ls -1 *.ts`) {
     console.log("TS file: ", fileName);
 }
 
-// output as lines
+// alias and output as lines
 for await (const fileName of $1`ll *.ts`) {
     console.log("TS file: ", fileName);
 }
