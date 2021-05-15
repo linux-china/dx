@@ -7,7 +7,7 @@ dx is based on Deno and with following pros:
 
 * TypeScript friendly
 * Easy to import third party modules, just `import {red, green} from "https://deno.land/std@0.95.0/fmt/colors.ts"`, no idea about zx to import third party npm(package.json???)
-* More features: alias, `$1` for lines output, globs, .env support etc
+* More features: alias, `$_` for lines output, globs, .env support etc
 * I ❤️ 🦕
 
 # Install
@@ -20,7 +20,7 @@ deno install -A --unstable -r -f -n dx https://denopkg.com/linux-china/dx/cli.ts
 
 ```typescript
 #!/usr/bin/env dx
-import {$, cd, pwd, question, os, fs, env, printf, glob, $1, alias,echo} from "./mod.ts";
+import {$, cd, pwd, question, os, fs, env, printf, glob, $_, alias,echo} from "./mod.ts";
 import {red, yellow, blue, green} from "https://deno.land/std@0.96.0/fmt/colors.ts";
 
 // aliases
@@ -40,12 +40,12 @@ const output = await $`ls -1 | wc -l`;
 echo("Files count: ", parseInt(output));
 
 // output as lines
-for await (const fileName of $1`ls -1 *.ts`) {
+for await (const fileName of $_`ls -1 *.ts`) {
     echo("TS file: ", fileName);
 }
 
 // alias and output as lines
-for await (const fileName of $1`ll *.ts`) {
+for await (const fileName of $_`ll *.ts`) {
     echo("TS file: ", fileName);
 }
 
@@ -89,7 +89,8 @@ for await (const fileName of glob("*.ts")) {
 }
 ```
 
-* env: env variables
+* env: env object
+* shell params support: $0(script name), $1 to $9  
 * Support to treat shell env variables as global variables in TypeScript
 
 ```typescript
@@ -125,15 +126,13 @@ try {
 
 # execute command and convert output into lines
 
-If you want to convert output into lines, and you can use `$1`, then use `for await...of` to iterate the lines.
+If you want to convert output into lines, and you can use `$_`, then use `for await...of` to iterate the lines.
 
 ```typescript
-for await (const fileName of $1`ls -1 *.ts`) {
+for await (const fileName of $_`ls -1 *.ts`) {
     console.log("file: ", fileName);
 }
 ```
-
-`$1` indicates first parameter in shell, and here it means you want to get multi lines.
 
 # color output
 
