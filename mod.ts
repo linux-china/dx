@@ -326,10 +326,14 @@ if (Deno.mainModule.endsWith("/dx/cli.ts")) { // launched by dx, such as `./demo
 }
 Object.assign(window, args);
 
-//hooks
-if (!env.get("UID")) {
-    env.set("UID", await $`id -u`);
-    env.set("GID", await $`id -g`);
+// hooks
+try {
+    if (!env.get("UID")) {
+        env.set("UID", await $`id -u`);
+        env.set("GID", await $`id -g`);
+    }
+} catch (e) {
+    console.error("Failed to execute id command:", e)
 }
 
 
