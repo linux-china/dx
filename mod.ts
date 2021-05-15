@@ -1,5 +1,6 @@
 import {readLines} from "https://deno.land/std@0.96.0/io/bufio.ts";
 import {delay} from "https://deno.land/std@0.96.0/async/mod.ts";
+import {parse} from "https://deno.land/std@0.96.0/flags/mod.ts";
 import * as os from 'https://deno.land/std@0.96.0/node/os.ts';
 import * as nodeFs from 'https://deno.land/std@0.96.0/node/fs.ts';
 import "https://deno.land/x/dotenv/load.ts";
@@ -184,6 +185,10 @@ export function pwd(): string {
 export const echo = console.log;
 
 export async function question(prompt: string) {
+    return read(prompt);
+}
+
+export async function read(prompt: string) {
     await Deno.stdout.write(textEncoder.encode(prompt));
     for await (const line of readLines(Deno.stdin)) {
         return line;
@@ -231,6 +236,20 @@ export async function* glob(pattern: string) {
             }
         }
     }
+}
+
+export function getops(keys?: string): { [name: string]: string } {
+    let pairs = parse(Deno.args);
+    if (keys) {
+        let temp: { [name: string]: string } = {}
+        keys.split(":").forEach(key => {
+            if (key in pairs) {
+                temp[key] = pairs[key];
+            }
+        })
+        return temp;
+    }
+    return pairs;
 }
 
 export const fs = {...nodeFs, ...nodeFs.promises};
