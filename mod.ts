@@ -321,7 +321,7 @@ if (Deno.mainModule.endsWith("/dx/cli.ts")) { // launched by dx, such as `./demo
         args[key] = value;
     });
     $['@'] = Deno.args;
-    $['#'] = Deno.args;
+    $['#'] = Deno.args.length;
     $['*'] = Deno.args.join(" ");
 }
 Object.assign(window, args);
