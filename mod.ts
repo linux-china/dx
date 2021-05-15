@@ -9,6 +9,7 @@ export {printf} from 'https://deno.land/std@0.96.0/fmt/printf.ts';
 
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
+const aliases: string[] = [];
 
 declare global {
     const HOME: string;
@@ -65,8 +66,17 @@ export const $: CmdContext = async function (pieces: TemplateStringsArray, ...ar
         stdout: "piped",
         stderr: "piped"
     });
+    if (aliases) {
+        let expandAliases = ""
+        if ($.shell.endsWith("bash")) {
+            expandAliases = "shopt -s expand_aliases;"
+        } else if ($.shell.endsWith("zsh")) {
+            expandAliases = "setopt aliases;";
+        }
+        await p.stdin.write(textEncoder.encode(expandAliases + aliases.join("\n") + "\n"));
+    }
     // @ts-ignore
-    await p.stdin.write(textEncoder.encode($.prefix + compiled));
+    await p.stdin.write(textEncoder.encode($.prefix + aliases.join(" ") + compiled));
     // @ts-ignore
     await p.stdin.close();
     const [status, stdout, stderr] = await Promise.all([
@@ -96,6 +106,15 @@ export const $1 = async function* (pieces: TemplateStringsArray, ...args: Array<
         stdout: "piped",
         stderr: "piped"
     });
+    if (aliases) {
+        let expandAliases = ""
+        if ($.shell.endsWith("bash")) {
+            expandAliases = "shopt -s expand_aliases;"
+        } else if ($.shell.endsWith("zsh")) {
+            expandAliases = "setopt aliases;";
+        }
+        await p.stdin.write(textEncoder.encode(expandAliases + aliases.join("\n") + "\n"));
+    }
     // @ts-ignore
     await p.stdin.write(textEncoder.encode($.prefix + compiled));
     // @ts-ignore
@@ -165,6 +184,10 @@ export async function question(prompt: string) {
  */
 export function cat(fileName: string): string {
     return Deno.readTextFileSync(fileName);
+}
+
+export function alias(name: string, command: string) {
+    aliases.push(`alias ${name}='${command}';`)
 }
 
 export async function sleep(interval: string | number) {
