@@ -59,6 +59,7 @@ interface CmdContext {
     shell: string
     prefix: string
     export: (name: string, value: string) => void;
+    alias: (name: string, value: string) => void;
 
     [name: string]: any
 }
@@ -170,6 +171,9 @@ $.prefix = "set -euo pipefail;";
 $.export = (name: string, value: string): void => {
     env.set(name, value);
 }
+$.alias = (name: string, command: string): void => {
+    aliases.push(`alias ${name}='${command}';`)
+}
 
 export function cd(path: string) {
     if (path.startsWith("~")) {
@@ -202,10 +206,6 @@ export async function read(prompt: string) {
  */
 export function cat(fileName: string): string {
     return Deno.readTextFileSync(fileName);
-}
-
-export function alias(name: string, command: string) {
-    aliases.push(`alias ${name}='${command}';`)
 }
 
 export async function sleep(interval: string | number) {
