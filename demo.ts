@@ -1,5 +1,8 @@
-import {$, cd, pwd, question, os, fs, env, printf, glob, $1} from "./mod.ts";
+import {$, cd, pwd, question, os, fs, env, printf, glob, $1, alias} from "./mod.ts";
 import {red, yellow, blue, green} from "https://deno.land/std@0.95.0/fmt/colors.ts";
+
+// aliases
+alias("ll", "ls -al");
 
 // prompt to input your name
 let name = await question(blue("what's your name: "));
@@ -13,6 +16,11 @@ console.log("Files count: ", parseInt(output));
 
 // output as lines
 for await (const fileName of $1`ls -1 *.ts`) {
+    console.log("TS file: ", fileName);
+}
+
+// output as lines
+for await (const fileName of $1`ll *.ts`) {
     console.log("TS file: ", fileName);
 }
 
