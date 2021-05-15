@@ -50,6 +50,36 @@ interface CmdContext {
     prefix: string
 }
 
+async function executeCommand(pieces: TemplateStringsArray, ...args: Array<unknown>) {
+    let compiled = pieces[0], i = 0;
+    for (; i < args.length; i++) compiled += args[i] + pieces[i + 1];
+    for (++i; i < pieces.length; i++) compiled += pieces[i];
+    const p = Deno.run({
+        cmd: [$.shell],
+        stdin: "piped",
+        stdout: "piped",
+        stderr: "piped"
+    });
+    if (aliases) {
+        let expandAliases = ""
+        if ($.shell.endsWith("bash")) {
+            expandAliases = "shopt -s expand_aliases;"
+        } else if ($.shell.endsWith("zsh")) {
+            expandAliases = "setopt aliases;";
+        }
+        await p.stdin?.write(textEncoder.encode(expandAliases + aliases.join("\n") + "\n"));
+    }
+    await p.stdin?.write(textEncoder.encode($.prefix + aliases.join(" ") + compiled));
+    await p.stdin?.close();
+    const [status, stdout, stderr] = await Promise.all([
+        p.status(),
+        p.output(),
+        p.stderrOutput()
+    ]);
+    p.close();
+    return [status, stdout, stderr];
+}
+
 /**
  * execute given command
  *
@@ -73,12 +103,10 @@ export const $: CmdContext = async function (pieces: TemplateStringsArray, ...ar
         } else if ($.shell.endsWith("zsh")) {
             expandAliases = "setopt aliases;";
         }
-        await p.stdin.write(textEncoder.encode(expandAliases + aliases.join("\n") + "\n"));
+        await p.stdin?.write(textEncoder.encode(expandAliases + aliases.join("\n") + "\n"));
     }
-    // @ts-ignore
-    await p.stdin.write(textEncoder.encode($.prefix + aliases.join(" ") + compiled));
-    // @ts-ignore
-    await p.stdin.close();
+    await p.stdin?.write(textEncoder.encode($.prefix + aliases.join(" ") + compiled));
+    await p.stdin?.close();
     const [status, stdout, stderr] = await Promise.all([
         p.status(),
         p.output(),
@@ -113,12 +141,10 @@ export const $1 = async function* (pieces: TemplateStringsArray, ...args: Array<
         } else if ($.shell.endsWith("zsh")) {
             expandAliases = "setopt aliases;";
         }
-        await p.stdin.write(textEncoder.encode(expandAliases + aliases.join("\n") + "\n"));
+        await p.stdin?.write(textEncoder.encode(expandAliases + aliases.join("\n") + "\n"));
     }
-    // @ts-ignore
-    await p.stdin.write(textEncoder.encode($.prefix + compiled));
-    // @ts-ignore
-    await p.stdin.close();
+    await p.stdin?.write(textEncoder.encode($.prefix + compiled));
+    await p.stdin?.close();
     const [status, stdout, stderr] = await Promise.all([
         p.status(),
         p.output(),
