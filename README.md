@@ -1,7 +1,7 @@
 dx: A tool for writing better scripts with Deno
 ==========================================
 
-![dx dino logo](docs/stegosaurus-512.png)
+![dx dino logo](docs/stegosaurus-256.png)
 
 # why a dx instead of Google zx
 
