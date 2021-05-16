@@ -61,9 +61,9 @@ function printTasks() {
                 if (pair[0] !== 'default' && typeof pair[1] === 'function') {
                     let funObj = module[pair[0]];
                     if ("desc" in funObj) {
-                        console.log(`    ${pair[0]} # ${funObj.desc}`);
+                        console.log(`  ${pair[0]} # ${funObj.desc}`);
                     } else {
-                        console.log("    " + pair[0]);
+                        console.log("  " + pair[0]);
                     }
                 }
             });
