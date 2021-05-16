@@ -154,9 +154,9 @@ declare global {
 }
 ```
 
-# execute command
+# execute command with output capture
 
-Same with zx, example as following:
+Use `$` tag to execute command and return value captured stdout.
 
 ```typescript
 let count = parseInt(await $`ls -1 | wc -l`)
@@ -174,9 +174,18 @@ try {
 }
 ```
 
+# execute command with stdout and stderr
+
+Use `$o` tag to execute command with stdout and stderr.
+
+```typescript
+await $o`ls -al`
+```
+
+
 # execute command and convert output into async iterable lines
 
-If you want to convert output into lines, and you can use `$a`, then use `for await...of` to iterate the lines.
+Use `$a` tag to execute command and return value is async iterable lines, and use `for await...of` to iterate the lines.
 
 ```typescript
 for await (const fileName of $a`ls -1 *.ts`) {
