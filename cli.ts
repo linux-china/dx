@@ -54,7 +54,7 @@ const command = new Command()
     .version("0.1.0")
     .versionOption("-v, --version")
     .description("A tool for writing better scripts with Deno")
-    .option("-t, --tasks", "List tasks", {
+    .option("-t, --tasks", "List tasks in Taskfile", {
         standalone: true,
         action: () => {
             if (stdFs.existsSync("Taskfile.ts")) {
