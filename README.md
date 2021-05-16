@@ -68,7 +68,7 @@ for await (const fileName of glob("*.ts")) {
 
 Then run `dx demo.ts` or `chmod u+x demo.ts ; ./demo.ts`'
 
-# Task runner support: Taskfile.js
+# Task runner support: Taskfile.ts or Taskfile.js
 
 `Taskfile.js` is file to manage tasks, and you can use dx to run the task.
 
