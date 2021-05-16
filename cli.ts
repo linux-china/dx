@@ -1,47 +1,55 @@
-import {join} from 'https://deno.land/std@0.96.0/path/mod.ts';
 import * as stdFs from "https://deno.land/std@0.96.0/fs/mod.ts";
 import {Command} from "https://deno.land/x/cliffy@v0.18.2/command/command.ts";
 
-async function runScriptFile(fileName: string): Promise<void> {
-    if (fileName.startsWith('http://') || fileName.startsWith('https://')) {
-        await import(fileName)
-    } else {
-        let filePath: string = join(Deno.cwd(), fileName);
-        if (!filePath.startsWith("file://")) {
-            filePath = "file://" + filePath;
-        }
-        await import(filePath);
-    }
+const taskfiles = ["Taskfile.ts", "Taskfile.js"]
+
+function detectTaskfile(): string | undefined {
+    return taskfiles.filter(file => {
+        return stdFs.existsSync(file);
+    })[0];
 }
 
-async function runTaskfile(...tasks: Array<string>) {
-    // @ts-ignore
-    import('./Taskfile.ts').then(module => {
-        if (tasks.length > 0) {
-            let runners = tasks.filter(task => {
-                return task in module;
-            }).map(task => {
-                console.log("===Task: " + task);
-                // @ts-ignore
-                return module[task]();
-            });
-            if (runners && runners.length > 0) {
-                // @ts-ignore
-                return Promise.all([...runners]);
+function convertFileToUri(fileName: string) {
+    let fileLocation = fileName;
+    if (!fileName.startsWith("http://") && !fileName.startsWith("https://")) {
+        fileLocation = `file://${Deno.cwd()}/${fileLocation}`;
+    }
+    return fileLocation;
+}
+
+async function runScriptFile(fileName: string): Promise<void> {
+    await import((convertFileToUri(fileName)));
+}
+
+async function runTaskfile(taskfile: string, ...tasks: Array<string>) {
+    let fileUri = convertFileToUri(taskfile);
+    import(fileUri).then(module => {
+            if (tasks.length > 0) {
+                let runners = tasks.filter(task => {
+                    return task in module;
+                }).map(task => {
+                    console.log("===Task: " + task);
+                    // @ts-ignore
+                    return module[task]();
+                });
+                if (runners && runners.length > 0) {
+                    // @ts-ignore
+                    return Promise.all([...runners]);
+                } else {
+                    console.log(`No '${tasks.join(",")}' tasks found in ${taskfile}.`);
+                    Deno.exit(2);
+                }
             } else {
-                console.log("No '" + tasks.join(",") + "' task found in Taskfile.")
-                Deno.exit(2);
-            }
-        } else {
-            if ("default" in module) {
-                console.log("===Task: default");
-                return module["default"]();
-            } else {
-                //console.log("No default task found in Taskfile, please use 'export default xxx;' to add default task.")
-                return command.parse(["-h"]);
+                if ("default" in module) {
+                    console.log("===Task: default");
+                    return module["default"]();
+                } else {
+                    //console.log("No default task found in Taskfile, please use 'export default xxx;' to add default task.")
+                    return command.parse(["-h"]);
+                }
             }
         }
-    });
+    );
 }
 
 function taskfileNotFound() {
@@ -57,11 +65,13 @@ const command = new Command()
     .option("-t, --tasks", "List tasks in Taskfile", {
         standalone: true,
         action: () => {
-            if (stdFs.existsSync("Taskfile.ts")) {
-                import('./Taskfile.ts').then(module => {
+            let taskfile = detectTaskfile();
+            if (taskfile) {
+                import('./' + taskfile).then(module => {
+                    console.log("Available tasks:")
                     Object.entries(module).forEach(pair => {
                         if (pair[0] !== 'default' && typeof pair[1] === 'function') {
-                            console.log(pair[0]);
+                            console.log("    " + pair[0]);
                         }
                     });
                 });
@@ -85,22 +95,24 @@ const command = new Command()
     .action(async (options: any, script: string | undefined, args: string[] | undefined) => {
         // run default task from Taskfile
         if (typeof script === 'undefined') {
-            if (stdFs.existsSync("Taskfile.ts")) {
-                await runTaskfile();
+            const taskfile = detectTaskfile();
+            if (taskfile) {
+                await runTaskfile(taskfile);
             } else { // display help
                 await command.parse(["-h"])
             }
         } else {
             //run ts file
-            if (script.endsWith(".ts")) {
-                if (script.endsWith("Taskfile.ts")) {
-                    await runTaskfile(...(args ?? []));
+            if (script.endsWith(".ts") || script.endsWith(".js")) {
+                if (script.endsWith("Taskfile.ts") || script.endsWith("Taskfiles.js")) {
+                    await runTaskfile(script, ...(args ?? []));
                 } else {
                     await runScriptFile(script);
                 }
             } else { // run tasks
-                if (stdFs.existsSync("Taskfile.ts")) {
-                    await runTaskfile(...(args ?? []));
+                let taskfile = detectTaskfile();
+                if (taskfile) {
+                    await runTaskfile(taskfile, ...(args ?? []));
                 } else {
                     taskfileNotFound();
                 }
