@@ -20,7 +20,7 @@ async function runTaskfile(...tasks: Array<string>) {
             let runners = tasks.filter(task => {
                 return task in module;
             }).map(task => {
-                console.log("===Task: "+task);
+                console.log("===Task: " + task);
                 // @ts-ignore
                 return module[task]();
             });
@@ -71,32 +71,33 @@ if (import.meta.main) {
                     if (pair[0] !== 'default' && typeof pair[1] === 'function') {
                         console.log(pair[0]);
                     }
-                })
+                });
             });
         } else {
             taskfileNotFound();
         }
-    }
-    // run default task from Taskfile
-    if (typeof firstArg === 'undefined') {
-        if (stdFs.existsSync("Taskfile.ts")) {
-            await runTaskfile();
-        } else { // display help
-            displayHelp();
-        }
     } else {
-        //run ts file
-        if (firstArg.endsWith(".ts")) {
-            if (firstArg.endsWith("Taskfile.ts")) {
-                await runTaskfile(...Deno.args.slice(1));
-            } else {
-                await runScriptFile(firstArg);
-            }
-        } else { // run tasks
+        // run default task from Taskfile
+        if (typeof firstArg === 'undefined') {
             if (stdFs.existsSync("Taskfile.ts")) {
-                await runTaskfile(...Deno.args);
-            } else {
-                taskfileNotFound();
+                await runTaskfile();
+            } else { // display help
+                displayHelp();
+            }
+        } else {
+            //run ts file
+            if (firstArg.endsWith(".ts")) {
+                if (firstArg.endsWith("Taskfile.ts")) {
+                    await runTaskfile(...Deno.args.slice(1));
+                } else {
+                    await runScriptFile(firstArg);
+                }
+            } else { // run tasks
+                if (stdFs.existsSync("Taskfile.ts") && firstArg !== "tasks") {
+                    await runTaskfile(...Deno.args);
+                } else {
+                    taskfileNotFound();
+                }
             }
         }
     }
