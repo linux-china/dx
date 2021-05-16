@@ -37,8 +37,8 @@ async function runTaskfile(...tasks: Array<string>) {
                 console.log("===Task: default");
                 return module["default"]();
             } else {
-                console.log("No default task found in Taskfile, please use 'export default xxx;' to add default task.")
-                Deno.exit(2);
+                //console.log("No default task found in Taskfile, please use 'export default xxx;' to add default task.")
+                return command.parse(["-h"]);
             }
         }
     });
@@ -71,11 +71,13 @@ const command = new Command()
     })
     .option("-u, --upgrade", "Upgrade dx to last version", {
         standalone: true,
-        action: () => {
+        action: async () => {
+            console.log("Begin to upgrade dx to last version.")
             const p = Deno.run({
-                cmd: ["deno", "--version"],
+                cmd: "deno install -q -A --unstable -r -f -n dx https://denopkg.com/linux-china/dx/cli.ts".split(" ")
             });
-            Deno.exit(0);
+            await p.status();
+            p.close();
         }
     })
     .arguments("[args...:string]")
