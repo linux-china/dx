@@ -68,9 +68,9 @@ for await (const fileName of glob("*.ts")) {
 
 Then run `dx demo.ts` or `chmod u+x demo.ts ; ./demo.ts`'
 
-# Task runner support: Taskfile.ts
+# Task runner support: Taskfile.js
 
-`Taskfile.ts` is file to manage tasks, and you can use dx to run the task.
+`Taskfile.js` is file to manage tasks, and you can use dx to run the task.
 
 The task is normal TypeScript's function with export directive, example as following:
 
@@ -91,8 +91,8 @@ export async function first() {
 
 Then run `dx hello` to run task.
 
-* `dx --tasks` to list tasks in `Taskfile.ts`
-* `Taskfile.ts` is case-sensitive
+* `dx --tasks` to list tasks in `Taskfile.js`
+* `Taskfile.js` is case-sensitive
 * Task names completions with o-my-zsh: `~/.oh-my-zsh/custom/plugins/dx/_dx`
 
 ```bash
@@ -124,7 +124,7 @@ import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china
 * getops:  grab arguments into object
 * test: single file test only, such as `if(test('-e mod.ts')) { }`
 * $.alias: introduce alias for command. `$.alias("ll", "ls -al")`
-* $.export: export env variable for command.  `$.expoort('ADMIN','xx');`
+* $.export: export env variable for command.  `$.expoort('NO_COLOR','true');`
 * cat:  read text file as string
 * read/question: read value from stdin with prompt
 * sleep: `await sleep(5);`
