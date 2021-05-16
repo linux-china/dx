@@ -81,11 +81,10 @@ const command = new Command()
             p.close();
         }
     })
-    .arguments("[args...:string]")
-    .action(async (options: any, args: Array<string>) => {
-        const firstArg = args ? args[0] : undefined;
+    .arguments("[script:string] [args...:string]")
+    .action(async (options: any, script: string | undefined, args: string[] | undefined) => {
         // run default task from Taskfile
-        if (typeof firstArg === 'undefined') {
+        if (typeof script === 'undefined') {
             if (stdFs.existsSync("Taskfile.ts")) {
                 await runTaskfile();
             } else { // display help
@@ -93,15 +92,15 @@ const command = new Command()
             }
         } else {
             //run ts file
-            if (firstArg.endsWith(".ts")) {
-                if (firstArg.endsWith("Taskfile.ts")) {
-                    await runTaskfile(...Deno.args.slice(1));
+            if (script.endsWith(".ts")) {
+                if (script.endsWith("Taskfile.ts")) {
+                    await runTaskfile(...(args ?? []));
                 } else {
-                    await runScriptFile(firstArg);
+                    await runScriptFile(script);
                 }
             } else { // run tasks
-                if (stdFs.existsSync("Taskfile.ts") && firstArg !== "tasks") {
-                    await runTaskfile(...Deno.args);
+                if (stdFs.existsSync("Taskfile.ts")) {
+                    await runTaskfile(...(args ?? []));
                 } else {
                     taskfileNotFound();
                 }
