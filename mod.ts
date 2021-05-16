@@ -230,7 +230,7 @@ export function getops(keys?: string): { [name: string]: string } {
     return pairs;
 }
 
-export function test(expression: string): boolean {
+export function test(expression: string, callback?: () => void): boolean {
     const pairs = expression.split(" ", 2);
     const condition = pairs[0];
     const fileName = pairs[1];
@@ -240,37 +240,52 @@ export function test(expression: string): boolean {
     const uid = parseInt(env.get("UID") ?? "0");
     const gid = parseInt(env.get("GID") ?? "0");
     const fileMode = fileInfo.mode ?? 0;
+    let result = false;
     switch (condition) {
         case '-e':
-            return exists;
+            result = exists;
+            break;
         case '-f':
-            return fileInfo.isFile;
+            result = fileInfo.isFile;
+            break;
         case '-d':
-            return fileInfo.isDirectory;
+            result = fileInfo.isDirectory;
+            break;
         case '-s':
-            return fileInfo.isFile && fileInfo.size > 0;
+            result = fileInfo.isFile && fileInfo.size > 0;
+            break;
         case '-h':
-            return fileInfo.isSymlink;
+            result = fileInfo.isSymlink;
+            break;
         case '-L':
-            return fileInfo.isSymlink;
+            result = fileInfo.isSymlink;
+            break;
         case '-O':
-            return fileInfo.uid === uid;
+            result = fileInfo.uid === uid;
+            break;
         case '-G':
-            return fileInfo.gid === gid;
+            result = fileInfo.gid === gid;
+            break;
         case '-r':
-            return (fileInfo.uid === uid && (fileMode & 0b100000000) > 0)
+            result = (fileInfo.uid === uid && (fileMode & 0b100000000) > 0)
                 || (fileInfo.gid === gid && (fileMode & 0b000100000) > 0)
                 || (fileInfo.uid !== uid && fileInfo.gid !== gid && (fileMode & 0b000000100) > 0);
+            break;
         case '-w':
-            return (fileInfo.uid === uid && (fileMode & 0b010000000) > 0)
+            result = (fileInfo.uid === uid && (fileMode & 0b010000000) > 0)
                 || (fileInfo.gid === gid && (fileMode & 0b000010000) > 0)
                 || (fileInfo.uid !== uid && fileInfo.gid !== gid && (fileMode & 0b000000010) > 0);
+            break;
         case '-x':
-            return (fileInfo.uid === uid && (fileMode & 0b001000000) > 0)
+            result = (fileInfo.uid === uid && (fileMode & 0b001000000) > 0)
                 || (fileInfo.gid === gid && (fileMode & 0b0000001000) > 0)
                 || (fileInfo.uid !== uid && fileInfo.gid !== gid && (fileMode & 0b000000001) > 0);
+            break;
     }
-    return false;
+    if (callback) {
+        callback();
+    }
+    return result;
 }
 
 export const fs = {...nodeFs, ...nodeFs.promises};
