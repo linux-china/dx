@@ -106,5 +106,7 @@ const command = new Command()
         }
     });
 
-await command.parse(Deno.args);
+if (import.meta.main) {
+    await command.parse(Deno.args);
+}
 
