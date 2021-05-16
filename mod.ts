@@ -145,7 +145,9 @@ export const $o = async function* (pieces: TemplateStringsArray, ...args: Array<
     const [status, stdout, stderr] = await executeCommand("inherit", pieces, ...args) as [Deno.ProcessStatus, Uint8Array, Uint8Array];
     if (status.code !== 0) {
         throw {
-            exitCode: status.code
+            exitCode: status.code,
+            stdout: "",
+            stderr: ""
         };
     }
 }
