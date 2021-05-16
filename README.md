@@ -75,6 +75,7 @@ Then run `dx demo.ts` or `chmod u+x demo.ts ; ./demo.ts`'
 The task is normal TypeScript's function with export directive, example as following:
 
 ```typescript
+/// <reference lib="esnext" />
 import {$, cd, pwd, question, os, fs, env, printf, glob, $a, echo} from "./mod.ts";
 import {red, yellow, blue, green} from "https://deno.land/std@0.96.0/fmt/colors.ts";
 
