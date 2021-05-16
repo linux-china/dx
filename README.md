@@ -65,6 +65,49 @@ for await (const fileName of glob("*.ts")) {
 
 Then run `dx demo.ts` or `chmod u+x demo.ts ; ./demo.ts`'
 
+# Taskfile.ts support
+
+`Taskfile.ts` is file to manage runners, and you can use dx to run the task.
+
+Task are normal TypeScript's function with export directive, example as following: 
+
+```typescript
+import {$, cd, pwd, question, os, fs, env, printf, glob, $a, echo} from "./mod.ts";
+import {red, yellow, blue, green} from "https://deno.land/std@0.96.0/fmt/colors.ts";
+
+export default hello;
+
+export async function hello() {
+    echo(green("Hello"));
+}
+
+export async function first() {
+    console.log(blue("first task"));
+}
+```
+
+Then run `dx hello` to run task.
+
+* `dx tasks` to list tasks from `Taskfile.ts`
+* `Taskfile.ts` is case-sensitive
+* task name completions with o-my-zsh: `~/.oh-my-zsh/custom/plugins/dx/_dx`
+
+```bash
+#compdef dx
+#autload
+
+local subcmds=()
+
+while read -r line ; do
+   if [[ ! $line == Available* ]] ;
+   then
+      subcmds+=(${line/[[:space:]]*\#/:})
+   fi
+done < <(dx --tasks)
+
+_describe 'command' subcmds
+```
+
 # functions and variables
 
 ```typescript
@@ -76,9 +119,9 @@ import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china
 * echo:  dump object as text on terminal
 * printf:  format output
 * getops:  grab arguments
-* test: single file test only, such as `test('-e mod.ts')'`  
+* test: single file test only, such as `test('-e mod.ts')'`
 * $.alias: introduce alias for command. `$.alias("ll", "ls -al")`
-* $.export: export env variable for command.  `$.expoort('ADMIN','xx');`  
+* $.export: export env variable for command.  `$.expoort('ADMIN','xx');`
 * cat:  read text file as string
 * read/question: read value from stdin with prompt
 * sleep: `await sleep(5);`
