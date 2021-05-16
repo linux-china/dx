@@ -73,6 +73,26 @@ function printTasks() {
     }
 }
 
+async function generateShellCompletion(shell: string) {
+    if (shell === "zsh") {
+        console.log("#compdef dx\n" +
+            "#autload\n" +
+            "\n" +
+            "local subcmds=()\n" +
+            "\n" +
+            "while read -r line ; do\n" +
+            "   if [[ ! $line == Available* ]] ;\n" +
+            "   then\n" +
+            "      subcmds+=(${line/[[:space:]]*\\#/:})\n" +
+            "   fi\n" +
+            "done < <(dx --tasks)\n" +
+            "\n" +
+            "_describe 'command' subcmds")
+    } else {
+        console.log("Not available now for  ", shell);
+    }
+}
+
 function taskfileNotFound() {
     console.log("Failed to find 'Taskfile.ts' or 'Taskfile.js' file.");
     Deno.exit(2);
@@ -98,6 +118,12 @@ const command = new Command()
             });
             await p.status();
             p.close();
+        }
+    })
+    .option("-c, --completion <shell:string>", "Generate shell completion for zsh, zsh.", {
+        standalone: true,
+        action: async (options: any) => {
+            await generateShellCompletion(options.completion);
         }
     })
     .arguments("[script:string] [args...:string]")
