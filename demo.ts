@@ -1,5 +1,5 @@
 import {$, cd, pwd, question, os, fs, env, printf, glob, $a, echo} from "./mod.ts";
-import {red, yellow, blue, green} from "https://deno.land/std@0.95.0/fmt/colors.ts";
+import {red, yellow, blue, green} from "https://deno.land/std@0.96.0/fmt/colors.ts";
 
 // aliases
 $.alias("ll", "ls -al");
