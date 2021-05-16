@@ -53,7 +53,7 @@ async function runTaskfile(taskfile: string, ...tasks: Array<string>) {
 }
 
 function taskfileNotFound() {
-    console.log("Failed to find Taskfile.ts");
+    console.log("Failed to find 'Taskfile.ts' or 'Taskfile.js' file.");
     Deno.exit(2);
 }
 
@@ -112,7 +112,9 @@ const command = new Command()
             } else { // run tasks
                 let taskfile = detectTaskfile();
                 if (taskfile) {
-                    await runTaskfile(taskfile, ...(args ?? []));
+                    //script is task name now
+                    const tasks = args ? [script, ...args] : [script];
+                    await runTaskfile(taskfile, ...tasks);
                 } else {
                     taskfileNotFound();
                 }
