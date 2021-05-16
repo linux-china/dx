@@ -88,7 +88,7 @@ export async function first() {
 
 Then run `dx hello` to run task.
 
-* `dx tasks` to list tasks from `Taskfile.ts`
+* `dx --tasks` to list tasks from `Taskfile.ts`
 * `Taskfile.ts` is case-sensitive
 * task name completions with o-my-zsh: `~/.oh-my-zsh/custom/plugins/dx/_dx`
 
