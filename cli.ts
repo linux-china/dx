@@ -52,6 +52,27 @@ async function runTaskfile(taskfile: string, ...tasks: Array<string>) {
     );
 }
 
+function printTasks() {
+    let taskfile = detectTaskfile();
+    if (taskfile) {
+        import(convertFileToUri(taskfile)).then(module => {
+            console.log("Available tasks:")
+            Object.entries(module).forEach(pair => {
+                if (pair[0] !== 'default' && typeof pair[1] === 'function') {
+                    let funObj = module[pair[0]];
+                    if ("desc" in funObj) {
+                        console.log(`    ${pair[0]} # ${funObj.desc}`);
+                    } else {
+                        console.log("    " + pair[0]);
+                    }
+                }
+            });
+        });
+    } else {
+        taskfileNotFound();
+    }
+}
+
 function taskfileNotFound() {
     console.log("Failed to find 'Taskfile.ts' or 'Taskfile.js' file.");
     Deno.exit(2);
@@ -65,24 +86,7 @@ const command = new Command()
     .option("-t, --tasks", "List tasks in Taskfile", {
         standalone: true,
         action: () => {
-            let taskfile = detectTaskfile();
-            if (taskfile) {
-                import('./' + taskfile).then(module => {
-                    console.log("Available tasks:")
-                    Object.entries(module).forEach(pair => {
-                        if (pair[0] !== 'default' && typeof pair[1] === 'function') {
-                            let funObj = module[pair[0]];
-                            if ("desc" in funObj) {
-                                console.log(`    ${pair[0]} # ${funObj.desc}`);
-                            } else {
-                                console.log("    " + pair[0]);
-                            }
-                        }
-                    });
-                });
-            } else {
-                taskfileNotFound();
-            }
+            printTasks();
         }
     })
     .option("-u, --upgrade", "Upgrade dx to last version", {
