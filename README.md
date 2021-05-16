@@ -6,8 +6,9 @@ dx: A tool for writing better scripts with Deno
 dx is based on Deno and with following pros:
 
 * TypeScript friendly
+* Task runner support: Taskfile to manage tasks
 * Easy to import third party modules, just `import {red, green} from "https://deno.land/std@0.95.0/fmt/colors.ts"`, no idea about zx to import third party npm(package.json???)
-* More features: alias, `$a` for async iterable line output, file globs, .env support etc
+* More features: alias, export, `$a` for async iterable line output, file globs, .env support etc
 * I ❤️ 🦕
 
 # Install
@@ -16,7 +17,9 @@ dx is based on Deno and with following pros:
 deno install -q -A --unstable -r -f -n dx https://denopkg.com/linux-china/dx/cli.ts
 ```
 
-# Demo
+# Get started
+
+Create a `demo.ts` file with following code:
 
 ```typescript
 #!/usr/bin/env dx
@@ -65,11 +68,11 @@ for await (const fileName of glob("*.ts")) {
 
 Then run `dx demo.ts` or `chmod u+x demo.ts ; ./demo.ts`'
 
-# Taskfile.ts support
+# Task runner support: Taskfile.ts
 
-`Taskfile.ts` is file to manage runners, and you can use dx to run the task.
+`Taskfile.ts` is file to manage tasks, and you can use dx to run the task.
 
-Task are normal TypeScript's function with export directive, example as following: 
+The task is normal TypeScript's function with export directive, example as following:
 
 ```typescript
 import {$, cd, pwd, question, os, fs, env, printf, glob, $a, echo} from "./mod.ts";
@@ -88,9 +91,9 @@ export async function first() {
 
 Then run `dx hello` to run task.
 
-* `dx --tasks` to list tasks from `Taskfile.ts`
+* `dx --tasks` to list tasks in `Taskfile.ts`
 * `Taskfile.ts` is case-sensitive
-* task name completions with o-my-zsh: `~/.oh-my-zsh/custom/plugins/dx/_dx`
+* Task names completions with o-my-zsh: `~/.oh-my-zsh/custom/plugins/dx/_dx`
 
 ```bash
 #compdef dx
@@ -118,8 +121,8 @@ import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china
 * pwd: get current working directory
 * echo:  dump object as text on terminal
 * printf:  format output
-* getops:  grab arguments
-* test: single file test only, such as `test('-e mod.ts')'`
+* getops:  grab arguments into object
+* test: single file test only, such as `if(test('-e mod.ts')) { }`
 * $.alias: introduce alias for command. `$.alias("ll", "ls -al")`
 * $.export: export env variable for command.  `$.expoort('ADMIN','xx');`
 * cat:  read text file as string
@@ -193,11 +196,13 @@ console.log(green("Hello"));
 
 # $ configuration
 
-$.shell and $.prefix are same to zx
+* $.shell: set shell for the command and default is `which bash`
+* $.prefix: prefix for every command line, default is `set -euo pipefail;` for strict mode.
 
 # packages
 
-fs and os packages are same to zx, and use fs and os modules from https://deno.land/std@0.95.0/node
+* fs is for file system from https://deno.land/std@0.96.0/node/fs.ts
+* os is for operating system from https://deno.land/std@0.96.0/node/os.ts
 
 # Misc
 
