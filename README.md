@@ -13,7 +13,7 @@ dx is based on Deno and with following pros:
 # Install
 
 ```bash
-deno install -A --unstable -r -f -n dx https://denopkg.com/linux-china/dx/cli.ts
+deno install -q -A --unstable -r -f -n dx https://denopkg.com/linux-china/dx/cli.ts
 ```
 
 # Demo
