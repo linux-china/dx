@@ -142,7 +142,7 @@ export const $a = async function* (pieces: TemplateStringsArray, ...args: Array<
 }
 
 $.shell = "bash";
-$.prefix = "set -euo pipefail;";
+$.prefix = "set -euo pipefail;"; // strict mode
 $.export = (name: string, value: string): void => {
     env.set(name, value);
 }
