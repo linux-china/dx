@@ -20,7 +20,7 @@ async function runTaskfile(...tasks: Array<string>) {
             let runners = tasks.filter(task => {
                 return task in module;
             }).map(task => {
-                console.log("Task: "+task);
+                console.log("===Task: "+task);
                 // @ts-ignore
                 return module[task]();
             });
