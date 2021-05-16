@@ -1,15 +1,15 @@
-dx: A tool for writing better scripts with Deno
+dx: A tool/runner for writing better scripts
 ==========================================
 
-![dx dino logo](docs/stegosaurus-256.png)
+dx is a tool and task runner for writing better scripts with Deno, and origin idea is from [https://github.com/google/zx/](https://github.com/google/zx/).
 
 # why a dx instead of Google zx
 
 dx is based on Deno and with following pros:
 
 * TypeScript friendly
-* Task runner support: Taskfile to manage tasks
-* Easy to import third party modules, just `import {red, green} from "https://deno.land/std@0.95.0/fmt/colors.ts"`, no idea about zx to import third party npm(package.json???)
+* Task runner support: Taskfile.ts/Taskfile.js to manage tasks
+* Easy to import third party modules, just `import {red, green} from "https://deno.land/std@0.96.0/fmt/colors.ts"`, no idea about zx to import third party npm(package.json???)
 * More features: alias, export, `$a` for async iterable line output, file globs, .env support etc
 * I ❤️ 🦕
 
@@ -72,7 +72,7 @@ Then run `dx demo.ts` or `chmod u+x demo.ts ; ./demo.ts`'
 
 # Task runner support: Taskfile.ts or Taskfile.js
 
-`Taskfile.js` is file to manage tasks, and you can use dx to run the task.
+`Taskfile.ts` or `Taskfile.js` is file to manage tasks, and you can use dx to run the task.
 
 The task is normal TypeScript's function with export directive, example as following:
 
@@ -87,15 +87,16 @@ export async function hello() {
     echo(green("Hello"));
 }
 
+hello.desc = "Hello task";
+
 export async function first() {
     console.log(blue("first task"));
 }
 ```
 
-Then run `dx hello` to run task.
+Then execute `dx hello` to run task.
 
-* `dx --tasks` to list tasks in `Taskfile.js`
-* `Taskfile.js` is case-sensitive
+* `dx --tasks` to list tasks in `Taskfile.ts` or `Taskfile.js`
 * Task names completions with o-my-zsh: `~/.oh-my-zsh/custom/plugins/dx/_dx`
 
 ```bash
@@ -142,9 +143,9 @@ for await (const fileName of glob("*.ts")) {
 }
 ```
 
-* env: env object
-* shell params support: $0(script name), $1 to $9, $['@'] for all arguments, $['#'] for number of arguments, $['*'] for params as a string
-* Support to treat shell env variables as global variables in TypeScript
+* env: env global object `env.get("HOME")`
+* Shell params support: $0(script name), $1 to $9, $['@'] for all arguments, $['#'] for number of arguments, $['*'] for params as a string
+* Shell env variables as global variables in TypeScript automatically.
 
 ```typescript
 // builtin env variables for hint, such as USER, HOME, PATH
@@ -157,7 +158,11 @@ declare global {
 }
 ```
 
-# execute command with output capture
+# Execute command
+
+dx supplies three styles to run command, and they are `$`, `$o` and `$a`.
+
+### $: execute command with stdout capture
 
 Use `$` tag to execute command and return value captured stdout.
 
@@ -166,7 +171,27 @@ let count = parseInt(await $`ls -1 | wc -l`)
 console.log(`Files count: ${count}`)
 ```
 
-**Attention:**: if exit code is not 0, and exception will be thrown.
+### $o: execute command with stdout and stderr
+
+Use `$o` tag to execute command with stdout and stderr output.
+
+```typescript
+await $o`ls -al`
+```
+
+### $a: execute command and convert output into async iterable lines
+
+Use `$a` tag to execute command and capture stdout and convert output into async iterable lines, then use `for await...of` to iterate the lines.
+
+```typescript
+for await (const fileName of $a`ls -1 *.ts`) {
+    console.log("file: ", fileName);
+}
+```
+
+### command error handler
+
+If exit code is not 0, and exception will be thrown.
 
 ```typescript
 try {
@@ -174,24 +199,6 @@ try {
 } catch (p) {
     console.log(`Exit code: ${p.exitCode}`)
     console.log(`Error: ${p.stderr}`)
-}
-```
-
-# execute command with stdout and stderr
-
-Use `$o` tag to execute command with stdout and stderr.
-
-```typescript
-await $o`ls -al`
-```
-
-# execute command and convert output into async iterable lines
-
-Use `$a` tag to execute command and return value is async iterable lines, and use `for await...of` to iterate the lines.
-
-```typescript
-for await (const fileName of $a`ls -1 *.ts`) {
-    console.log("file: ", fileName);
 }
 ```
 
