@@ -1,6 +1,8 @@
 dx: A tool for writing better scripts with Deno
 ==========================================
 
+![dx dino logo](docs/stegosaurus-512.png)
+
 # why a dx instead of Google zx
 
 dx is based on Deno and with following pros:
@@ -182,7 +184,6 @@ Use `$o` tag to execute command with stdout and stderr.
 ```typescript
 await $o`ls -al`
 ```
-
 
 # execute command and convert output into async iterable lines
 
