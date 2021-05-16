@@ -97,22 +97,11 @@ export async function first() {
 Then execute `dx hello` to run task.
 
 * `dx --tasks` to list tasks in `Taskfile.ts` or `Taskfile.js`
-* Task names completions with o-my-zsh: `~/.oh-my-zsh/custom/plugins/dx/_dx`
+* Task names completion with o-my-zsh. Please add dx to plugins in `~/.zshrc`.
 
 ```bash
-#compdef dx
-#autload
-
-local subcmds=()
-
-while read -r line ; do
-   if [[ ! $line == Available* ]] ;
-   then
-      subcmds+=(${line/[[:space:]]*\#/:})
-   fi
-done < <(dx --tasks)
-
-_describe 'command' subcmds
+mkdir -p ~/.oh-my-zsh/custom/plugins/dx/
+dx -c zsh > ~/.oh-my-zsh/custom/plugins/dx/_dx
 ```
 
 # functions and variables
