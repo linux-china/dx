@@ -7,6 +7,8 @@ export async function hello() {
     echo(green("Hello"));
 }
 
+hello.desc = "Hello task";
+
 export async function first() {
     console.log(blue("first task"));
 }
