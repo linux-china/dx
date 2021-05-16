@@ -71,7 +71,12 @@ const command = new Command()
                     console.log("Available tasks:")
                     Object.entries(module).forEach(pair => {
                         if (pair[0] !== 'default' && typeof pair[1] === 'function') {
-                            console.log("    " + pair[0]);
+                            let funObj = module[pair[0]];
+                            if ("desc" in funObj) {
+                                console.log(`    ${pair[0]} # ${funObj.desc}`);
+                            } else {
+                                console.log("    " + pair[0]);
+                            }
                         }
                     });
                 });
