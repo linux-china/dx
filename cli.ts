@@ -1,5 +1,6 @@
 import {join} from 'https://deno.land/std@0.96.0/path/mod.ts';
 import * as stdFs from "https://deno.land/std@0.96.0/fs/mod.ts";
+import {Command} from "https://deno.land/x/cliffy@v0.18.2/command/command.ts";
 
 async function runScriptFile(fileName: string): Promise<void> {
     if (fileName.startsWith('http://') || fileName.startsWith('https://')) {
@@ -33,6 +34,7 @@ async function runTaskfile(...tasks: Array<string>) {
             }
         } else {
             if ("default" in module) {
+                console.log("===Task: default");
                 return module["default"]();
             } else {
                 console.log("No default task found in Taskfile, please use 'export default xxx;' to add default task.")
@@ -47,42 +49,44 @@ function taskfileNotFound() {
     Deno.exit(2);
 }
 
-function displayHelp() {
-    console.log("usage: zx <script> or zx <task>");
-    Deno.exit(0);
-}
-
-if (import.meta.main) {
-    const firstArg = Deno.args[0];
-    // display version
-    if (['-v', '-V', '--version'].includes(firstArg)) {
-        console.log(`dx version 0.1.0`);
-        Deno.exit(0);
-    }
-    //display help
-    if (['-h', '-H', '--help'].includes(firstArg)) {
-        displayHelp();
-    }
-    // display tasks from Taskfile
-    if (['-t', 'tasks', '--tasks'].includes(firstArg)) {
-        if (stdFs.existsSync("Taskfile.ts")) {
-            import('./Taskfile.ts').then(module => {
-                Object.entries(module).forEach(pair => {
-                    if (pair[0] !== 'default' && typeof pair[1] === 'function') {
-                        console.log(pair[0]);
-                    }
+const command = new Command()
+    .name("dx")
+    .version("0.1.0")
+    .description("A tool for writing better scripts with Deno")
+    .option("-t, --tasks", "List tasks", {
+        standalone: true,
+        action: () => {
+            if (stdFs.existsSync("Taskfile.ts")) {
+                import('./Taskfile.ts').then(module => {
+                    Object.entries(module).forEach(pair => {
+                        if (pair[0] !== 'default' && typeof pair[1] === 'function') {
+                            console.log(pair[0]);
+                        }
+                    });
                 });
-            });
-        } else {
-            taskfileNotFound();
+            } else {
+                taskfileNotFound();
+            }
         }
-    } else {
+    })
+    .option("-u, --upgrade", "Upgrade dx to last version", {
+        standalone: true,
+        action: () => {
+            const p = Deno.run({
+                cmd: ["deno", "--version"],
+            });
+            Deno.exit(0);
+        }
+    })
+    .arguments("[args...:string]")
+    .action(async (options: any, args: Array<string>) => {
+        const firstArg = args ? args[0] : undefined;
         // run default task from Taskfile
         if (typeof firstArg === 'undefined') {
             if (stdFs.existsSync("Taskfile.ts")) {
                 await runTaskfile();
             } else { // display help
-                displayHelp();
+                await command.parse(["-h"])
             }
         } else {
             //run ts file
@@ -100,6 +104,7 @@ if (import.meta.main) {
                 }
             }
         }
-    }
-}
+    });
+
+await command.parse(Deno.args);
 
