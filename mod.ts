@@ -65,15 +65,15 @@ interface CmdContext {
     [name: string]: any
 }
 
-async function executeCommand(pieces: TemplateStringsArray, ...args: Array<unknown>): Promise<[Deno.ProcessStatus, Uint8Array, Uint8Array]> {
+async function executeCommand(outputMode: "piped" | 'inherit' | 'null', pieces: TemplateStringsArray, ...args: Array<unknown>): Promise<[Deno.ProcessStatus, Uint8Array, Uint8Array]> {
     let compiled = pieces[0], i = 0;
     for (; i < args.length; i++) compiled += args[i] + pieces[i + 1];
     for (++i; i < pieces.length; i++) compiled += pieces[i];
     const p = Deno.run({
         cmd: [$.shell],
         stdin: "piped",
-        stdout: "piped",
-        stderr: "piped"
+        stdout: outputMode,
+        stderr: outputMode
     });
     // expand aliases
     if (aliases) {
@@ -108,7 +108,7 @@ async function executeCommand(pieces: TemplateStringsArray, ...args: Array<unkno
  * @return {Promise<string>} stdout as string if exit code is 0
  */
 export const $: CmdContext = async function (pieces: TemplateStringsArray, ...args: Array<unknown>): Promise<string> {
-    const [status, stdout, stderr]: [Deno.ProcessStatus, Uint8Array, Uint8Array] = await executeCommand(pieces, ...args);
+    const [status, stdout, stderr] = await executeCommand("piped", pieces, ...args) as [Deno.ProcessStatus, Uint8Array, Uint8Array];
     if (status.code === 0) {
         return textDecoder.decode(await stdout);
     } else {
@@ -121,7 +121,7 @@ export const $: CmdContext = async function (pieces: TemplateStringsArray, ...ar
 }
 
 export const $a = async function* (pieces: TemplateStringsArray, ...args: Array<unknown>) {
-    const [status, stdout, stderr]: [Deno.ProcessStatus, Uint8Array, Uint8Array] = await executeCommand(pieces, ...args);
+    const [status, stdout, stderr] = await executeCommand("piped", pieces, ...args) as [Deno.ProcessStatus, Uint8Array, Uint8Array];
     if (status.code === 0) {
         const output = textDecoder.decode(await stdout);
         const lines = output.match(/[^\r\n]+/g);
@@ -137,6 +137,15 @@ export const $a = async function* (pieces: TemplateStringsArray, ...args: Array<
             exitCode: status.code,
             stdout: textDecoder.decode(await stdout),
             stderr: textDecoder.decode(await stderr)
+        };
+    }
+}
+
+export const $o = async function* (pieces: TemplateStringsArray, ...args: Array<unknown>) {
+    const [status, stdout, stderr] = await executeCommand("inherit", pieces, ...args) as [Deno.ProcessStatus, Uint8Array, Uint8Array];
+    if (status.code !== 0) {
+        throw {
+            exitCode: status.code
         };
     }
 }
