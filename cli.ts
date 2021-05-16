@@ -21,6 +21,6 @@ async function dxCli(): Promise<void> {
 }
 
 if (import.meta.main) {
-    dxCli();
+   await dxCli();
 }
 
