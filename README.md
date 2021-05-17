@@ -215,19 +215,12 @@ console.log(green("Hello"));
 
 * .env auto load
 * Compile script into executable binary: `deno compile --unstable -A --lite demo.ts`
-* Language Injections in WebStorm:  Settings -> Editor -> Language Injections, and add "JS Tagged Literal Injection" as following:
-
-![Language Injections in WebStorm](./docs/webstorm-dx-settings.png)
-
-* Run dx tasks from JetBrains IDE: Settings -> Keymap -> Search "Anything", and add Keyboard shortcut, such as "Alt + X". In "Run Anything" dialog, input "dx xx yyy".
-
-![Run dx tasks](docs/dx-run-tasks.png)
-
-* dx JetBrains IDE plugin is on the way. 
+* dx JetBrains IDE plugin: https://plugins.jetbrains.com/plugin/16805-dx 
 
 ![dx JetBrains IDEs plugin](docs/dx-jetbrains-plugin.png)
 
 # References
 
 * Google zx: https://github.com/google/zx
+* dx JetBrains IDEs plugin: https://plugins.jetbrains.com/plugin/16805-dx  
 * Bash Cheatsheet: https://devhints.io/bash https://shellmagic.xyz/
