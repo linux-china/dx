@@ -219,6 +219,10 @@ console.log(green("Hello"));
 
 ![Language Injections in WebStorm](./docs/webstorm-dx-settings.png)
 
+* Run dx tasks from JetBrains IDE: Settings -> Keymap -> Search "Anything", and add Keyboard shortcut, such as "Alt + X". In "Run Anything" dialog, input "dx xx yyy".
+
+![Run dx tasks](docs/dx-run-tasks.png)
+
 # References
 
 * Google zx: https://github.com/google/zx
