@@ -12,7 +12,11 @@ function detectTaskfile(): string | undefined {
 function convertFileToUri(fileName: string) {
     let fileLocation = fileName;
     if (!fileName.startsWith("http://") && !fileName.startsWith("https://")) {
-        fileLocation = `file://${Deno.cwd()}/${fileLocation}`;
+        if (fileName.startsWith("/")) {
+            fileLocation = `file://${fileLocation}`;
+        } else {
+            fileLocation = `file://${Deno.cwd()}/${fileLocation}`;
+        }
     }
     return fileLocation;
 }
