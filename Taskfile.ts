@@ -1,5 +1,5 @@
 /// <reference lib="esnext" />
-import {$, cd, pwd, question, os, fs, env, printf, glob, $a, echo} from "./mod.ts";
+import {$, $o, $a, cd, pwd, question, glob, echo, cat,sleep,printf} from 'https://denopkg.com/linux-china/dx/mod.ts';
 import {red, yellow, blue, green} from "https://deno.land/std@0.96.0/fmt/colors.ts";
 
 export default hello;
