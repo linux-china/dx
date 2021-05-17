@@ -5,7 +5,8 @@ import {red, yellow, blue, green} from "https://deno.land/std@0.96.0/fmt/colors.
 export default hello;
 
 export async function hello() {
-    echo(green("Hello"));
+    const output = await $`ls -1 | wc -l`;
+    echo("Files count: ", parseInt(output));
 }
 
 hello.desc = "Hello task";
