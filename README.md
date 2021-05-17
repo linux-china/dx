@@ -25,7 +25,7 @@ Create a `demo.ts` file with following code:
 
 ```typescript
 #!/usr/bin/env dx
-import {$, cd, pwd, question, os, fs, env, printf, glob, $a, echo} from "./mod.ts";
+import {$, cd, pwd, question, os, fs, env, printf, glob, $a, echo} from "https://denopkg.com/linux-china/dx/mod.ts";
 import {red, yellow, blue, green} from "https://deno.land/std@0.96.0/fmt/colors.ts";
 
 // aliases
@@ -78,7 +78,7 @@ The task is normal TypeScript's function with export directive, example as follo
 
 ```typescript
 /// <reference lib="esnext" />
-import {$, cd, pwd, question, os, fs, env, printf, glob, $a, echo} from "./mod.ts";
+import {$, cd, pwd, question, os, fs, env, printf, glob, $a, echo} from "https://denopkg.com/linux-china/dx/mod.ts";
 import {red, yellow, blue, green} from "https://deno.land/std@0.96.0/fmt/colors.ts";
 
 export default hello;
@@ -222,6 +222,10 @@ console.log(green("Hello"));
 * Run dx tasks from JetBrains IDE: Settings -> Keymap -> Search "Anything", and add Keyboard shortcut, such as "Alt + X". In "Run Anything" dialog, input "dx xx yyy".
 
 ![Run dx tasks](docs/dx-run-tasks.png)
+
+* dx JetBrains IDE plugin is on the way. 
+
+![dx JetBrains IDEs plugin](docs/dx-jetbrains-plugin.png)
 
 # References
 
