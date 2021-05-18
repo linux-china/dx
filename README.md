@@ -224,3 +224,4 @@ console.log(green("Hello"));
 * Google zx: https://github.com/google/zx
 * dx JetBrains IDEs plugin: https://plugins.jetbrains.com/plugin/16805-dx  
 * Bash Cheatsheet: https://devhints.io/bash https://shellmagic.xyz/
+* Advanced Bash-Scripting Guide: https://tldp.org/LDP/abs/html/
