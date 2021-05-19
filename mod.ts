@@ -65,7 +65,7 @@ interface CmdContext {
     [name: string]: any
 }
 
-async function executeCommand(outputMode: "piped" | 'inherit' | 'null', pieces: TemplateStringsArray, ...args: Array<unknown>): Promise<[Deno.ProcessStatus, Uint8Array, Uint8Array]> {
+async function executeCommand(outputMode: "piped" | 'inherit' | 'null', pieces: TemplateStringsArray, ...args: Array<unknown>): Promise<[Deno.ProcessStatus, Uint8Array, Uint8Array] | Deno.ProcessStatus> {
     let compiled = pieces[0], i = 0;
     for (; i < args.length; i++) compiled += args[i] + pieces[i + 1];
     for (++i; i < pieces.length; i++) compiled += pieces[i];
@@ -92,11 +92,16 @@ async function executeCommand(outputMode: "piped" | 'inherit' | 'null', pieces: 
     await p.stdin?.write(textEncoder.encode(envDeclares + "\n"));
     await p.stdin?.write(textEncoder.encode($.prefix + compiled));
     await p.stdin?.close();
-    const result = await Promise.all([
-        p.status(),
-        p.output(),
-        p.stderrOutput()
-    ]);
+    let result: any;
+    if (outputMode === "piped") {
+        result = await Promise.all([
+            p.status(),
+            p.output(),
+            p.stderrOutput()
+        ]);
+    } else {
+        result = await p.status();
+    }
     p.close();
     return result;
 }
@@ -141,8 +146,8 @@ export const $a = async function* (pieces: TemplateStringsArray, ...args: Array<
     }
 }
 
-export const $o = async function* (pieces: TemplateStringsArray, ...args: Array<unknown>) {
-    const [status, stdout, stderr] = await executeCommand("inherit", pieces, ...args) as [Deno.ProcessStatus, Uint8Array, Uint8Array];
+export const $o = async function (pieces: TemplateStringsArray, ...args: Array<unknown>) {
+    const status = await executeCommand("inherit", pieces, ...args) as Deno.ProcessStatus;
     if (status.code !== 0) {
         throw {
             exitCode: status.code,
