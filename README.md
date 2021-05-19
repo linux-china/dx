@@ -115,7 +115,7 @@ import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china
 * echo:  dump object as text on terminal
 * printf:  format output
 * getops:  grab arguments into object
-* test: single file test only, such as `if(test('-e mod.ts')) { }`
+* test: file conditions and single file test only, such as `if(test('-e mod.ts')) { }`
 * $.alias: introduce alias for command. `$.alias("ll", "ls -al")`
 * $.export: export env variable for command.  `$.expoort('NO_COLOR','true');`
 * cat:  read text file as string
