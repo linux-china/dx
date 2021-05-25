@@ -110,11 +110,7 @@ dx -c zsh > ~/.oh-my-zsh/custom/plugins/dx/_dx
 import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china/dx/mod.ts";
 ```
 
-* cd: change current working directory. `cd('../')` or `cd('~/')`
-* pwd: get current working directory
-* echo:  dump object as text on terminal
-* printf:  format output
-* getops:  grab arguments into object
+* built-in functions: cd, pw, echo, printf, cp, mv, rm, mkdir, getops   
 * test: file conditions and single file test only, such as `if(test('-e mod.ts')) { }`
 * $.alias: introduce alias for command. `$.alias("ll", "ls -al")`
 * $.export: export env variable for command.  `$.expoort('NO_COLOR','true');`
