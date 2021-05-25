@@ -246,6 +246,36 @@ export function getops(keys?: string): { [name: string]: string } {
     return pairs;
 }
 
+/**
+ * Recursively make a directory, mkdir -p
+ * @param path
+ */
+export function mkdir(path: string) {
+    stdFs.ensureDirSync(path);
+}
+
+/**
+ * Copy files or folders
+ */
+export function cp(source: string, dest: string) {
+    stdFs.copySync(source, dest, {overwrite: true});
+}
+
+/**
+ * move files or folders
+ */
+export function mv(source: string, dest: string) {
+    stdFs.moveSync(source, dest, {overwrite: true});
+}
+
+/**
+ * Remove a file or folder recursively
+ * @param path
+ */
+export function rm(path: string) {
+    Deno.removeSync(path, {recursive: true});
+}
+
 export function test(expression: string, callback?: () => void): boolean {
     const pairs = expression.split(" ", 2);
     const condition = pairs[0];
