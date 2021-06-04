@@ -9,14 +9,14 @@ dx is based on Deno and with following pros:
 
 * TypeScript friendly
 * Task runner support: Taskfile.ts/Taskfile.js to manage tasks
-* Easy to import third party modules, just `import {red, green} from "https://deno.land/std@0.96.0/fmt/colors.ts"`, no idea about zx to import third party npm(package.json???)
+* Easy to import third party modules, just `import {red, green} from "https://deno.land/std@0.97.0/fmt/colors.ts"`, no idea about zx to import third party npm(package.json???)
 * More features: alias, export, `$a` for async iterable line output, file globs, .env support etc
 * I ❤️ 🦕
 
 # Install
 
 ```bash
-deno install -q -A --unstable -r -f -n dx https://denopkg.com/linux-china/dx/cli.ts
+deno install -q -A --unstable -r -f -n dx https://deno.land/x/deno_dx/cli.ts
 ```
 
 # Get started
@@ -25,8 +25,8 @@ Create a `demo.ts` file with following code:
 
 ```typescript
 #!/usr/bin/env dx
-import {$, cd, pwd, question, os, fs, env, printf, glob, $a, echo} from "https://denopkg.com/linux-china/dx/mod.ts";
-import {red, yellow, blue, green} from "https://deno.land/std@0.96.0/fmt/colors.ts";
+import {$, cd, pwd, question, os, fs, env, printf, glob, $a, echo} from "https://deno.land/x/deno_dx/mod.ts";
+import {red, yellow, blue, green} from "https://deno.land/std@0.97.0/fmt/colors.ts";
 
 // aliases
 $.alias("ll", "ls -al");
@@ -78,8 +78,8 @@ The task is normal TypeScript's function with export directive, example as follo
 
 ```typescript
 /// <reference lib="esnext" />
-import {$, cd, pwd, question, os, fs, env, printf, glob, $a, echo} from "https://denopkg.com/linux-china/dx/mod.ts";
-import {red, yellow, blue, green} from "https://deno.land/std@0.96.0/fmt/colors.ts";
+import {$, cd, pwd, question, os, fs, env, printf, glob, $a, echo} from "https://deno.land/x/deno_dx/mod.ts";
+import {red, yellow, blue, green} from "https://deno.land/std@0.97.0/fmt/colors.ts";
 
 export default hello;
 
@@ -107,7 +107,7 @@ dx -c zsh > ~/.oh-my-zsh/custom/plugins/dx/_dx
 # functions and variables
 
 ```typescript
-import {$, cd, pwd, question, os, fs, env} from "https://denopkg.com/linux-china/dx/mod.ts";
+import {$, cd, pwd, question, os, fs, env} from "https://deno.land/x/deno_dx/mod.ts";
 ```
 
 * built-in functions: cd, pw, echo, printf, cp, mv, rm, mkdir, getops   
