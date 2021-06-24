@@ -1,5 +1,5 @@
-import * as stdFs from "https://deno.land/std@0.97.0/fs/mod.ts";
-import {Command} from "https://deno.land/x/cliffy@v0.19.0/command/command.ts";
+import * as stdFs from "https://deno.land/std@0.99.0/fs/mod.ts";
+import {Command} from "https://deno.land/x/cliffy@v0.19.2/command/command.ts";
 
 const taskfiles = ["Taskfile.ts", "Taskfile.js"]
 

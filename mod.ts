@@ -1,13 +1,13 @@
-import {readLines} from "https://deno.land/std@0.97.0/io/bufio.ts";
-import {delay} from "https://deno.land/std@0.97.0/async/mod.ts";
-import {parse} from "https://deno.land/std@0.97.0/flags/mod.ts";
-import * as os from 'https://deno.land/std@0.97.0/node/os.ts';
-import * as nodeFs from 'https://deno.land/std@0.97.0/node/fs.ts';
-import * as stdFs from "https://deno.land/std@0.97.0/fs/mod.ts";
+import {readLines} from "https://deno.land/std@0.99.0/io/bufio.ts";
+import {delay} from "https://deno.land/std@0.99.0/async/mod.ts";
+import {parse} from "https://deno.land/std@0.99.0/flags/mod.ts";
+import * as os from 'https://deno.land/std@0.99.0/node/os.ts';
+import * as nodeFs from 'https://deno.land/std@0.99.0/node/fs.ts';
+import * as stdFs from "https://deno.land/std@0.99.0/fs/mod.ts";
 import "https://deno.land/x/dotenv@v2.0.0/load.ts";
 
-export * as os from 'https://deno.land/std@0.97.0/node/os.ts';
-export {printf} from 'https://deno.land/std@0.97.0/fmt/printf.ts';
+export * as os from 'https://deno.land/std@0.99.0/node/os.ts';
+export {printf} from 'https://deno.land/std@0.99.0/fmt/printf.ts';
 
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
