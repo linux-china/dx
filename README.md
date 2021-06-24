@@ -16,7 +16,7 @@ dx is based on Deno and with following pros:
 # Install
 
 ```bash
-deno install -q -A --unstable -r -f -n dx https://deno.land/x/deno_dx/cli.ts
+deno install -q -A --unstable --no-check -r -f -n dx https://deno.land/x/deno_dx/cli.ts
 ```
 
 # Get started
