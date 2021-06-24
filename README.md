@@ -26,7 +26,7 @@ Create a `demo.ts` file with following code:
 ```typescript
 #!/usr/bin/env dx
 import {$, cd, pwd, question, os, fs, env, printf, glob, $a, echo} from "https://deno.land/x/deno_dx/mod.ts";
-import {red, yellow, blue, green} from "https://deno.land/std@0.97.0/fmt/colors.ts";
+import {red, yellow, blue, green} from "https://deno.land/std@0.99.0/fmt/colors.ts";
 
 // aliases
 $.alias("ll", "ls -al");
@@ -79,7 +79,7 @@ The task is normal TypeScript's function with export directive, example as follo
 ```typescript
 /// <reference lib="esnext" />
 import {$, cd, pwd, question, os, fs, env, printf, glob, $a, echo} from "https://deno.land/x/deno_dx/mod.ts";
-import {red, yellow, blue, green} from "https://deno.land/std@0.97.0/fmt/colors.ts";
+import {red, yellow, blue, green} from "https://deno.land/std@0.99.0/fmt/colors.ts";
 
 export default hello;
 
