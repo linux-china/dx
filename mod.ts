@@ -58,8 +58,10 @@ interface CmdContext {
 
     shell: string
     prefix: string
-    export: (name: string, value: string) => void;
-    alias: (name: string, value: string) => void;
+    export: (name: string, value: string) => void
+    alias: (name: string, value: string) => void
+    awk: string
+    grep: string
 
     // deno-lint-ignore no-explicit-any
     [name: string]: any
@@ -181,6 +183,8 @@ $.export = (name: string, value: string): void => {
 $.alias = (name: string, command: string): void => {
     aliases.push(`alias ${name}='${command}';`)
 }
+$.awk = "awk";
+$.grep = "grep";
 
 export function cd(path: string) {
     if (path.startsWith("~")) {
@@ -297,8 +301,20 @@ export function awk(pieces: TemplateStringsArray, ...args: Array<unknown>) {
     const awkTempFile = Deno.makeTempFileSync();
     Deno.writeTextFileSync(awkTempFile, compiled);
     return async function* (fileName: string, options?: string) {
-        let command = "awk";
+        let command = $.awk;
         const commandLine = `${command} ${options ?? ""} -f ${awkTempFile} ${fileName}`;
+        for await (const line of outputAsLines(commandLine)) {
+            yield line;
+        }
+    };
+}
+
+export function grep(pieces: TemplateStringsArray, ...args: Array<unknown>) {
+    const compiled = compileTemplate(pieces, ...args);
+    console.log("regex: ", compiled);
+    return async function* (fileName: string, options?: string) {
+        let command = $.grep;
+        const commandLine = `${command} ${options ?? ""} "${compiled}" ${fileName}`;
         for await (const line of outputAsLines(commandLine)) {
             yield line;
         }
