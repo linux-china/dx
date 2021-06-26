@@ -1,5 +1,5 @@
 /// <reference lib="esnext" />
-import {$, $o, $a, cd, pwd, question, glob, echo, cat,sleep,printf} from "./mod.ts";
+import {$, $o, $a, cd, pwd, question, glob, echo, cat, sleep, printf} from "./mod.ts";
 import {red, yellow, blue, green} from "https://deno.land/std@0.97.0/fmt/colors.ts";
 
 // aliases
