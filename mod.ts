@@ -65,11 +65,15 @@ interface CmdContext {
     [name: string]: any
 }
 
-async function executeCommand(outputMode: "piped" | 'inherit' | 'null', pieces: TemplateStringsArray, ...args: Array<unknown>): Promise<[Deno.ProcessStatus, Uint8Array, Uint8Array] | Deno.ProcessStatus> {
+function compileTemplate(pieces: TemplateStringsArray, ...args: Array<unknown>): string {
     let compiled = pieces[0], i = 0;
     for (; i < args.length; i++) compiled += args[i] + pieces[i + 1];
     for (++i; i < pieces.length; i++) compiled += pieces[i];
-    return executeCommandLine(outputMode, compiled);
+    return compiled;
+}
+
+async function executeCommand(outputMode: "piped" | 'inherit' | 'null', pieces: TemplateStringsArray, ...args: Array<unknown>): Promise<[Deno.ProcessStatus, Uint8Array, Uint8Array] | Deno.ProcessStatus> {
+    return executeCommandLine(outputMode, compileTemplate(pieces, ...args));
 }
 
 async function executeCommandLine(outputMode: "piped" | 'inherit' | 'null', commandLine: string): Promise<[Deno.ProcessStatus, Uint8Array, Uint8Array] | Deno.ProcessStatus> {
@@ -129,8 +133,9 @@ export const $: CmdContext = async function (pieces: TemplateStringsArray, ...ar
     }
 }
 
-export const $a = async function* (pieces: TemplateStringsArray, ...args: Array<unknown>) {
-    const [status, stdout, stderr] = await executeCommand("piped", pieces, ...args) as [Deno.ProcessStatus, Uint8Array, Uint8Array];
+async function* outputAsLines(commandLine: string) {
+    const [status, stdout, stderr] = await executeCommandLine("piped", commandLine) as [Deno.ProcessStatus, Uint8Array, Uint8Array];
+    // noinspection DuplicatedCode
     if (status.code === 0) {
         const output = textDecoder.decode(await stdout);
         const lines = output.match(/[^\r\n]+/g);
@@ -147,6 +152,13 @@ export const $a = async function* (pieces: TemplateStringsArray, ...args: Array<
             stdout: textDecoder.decode(await stdout),
             stderr: textDecoder.decode(await stderr)
         };
+    }
+}
+
+export const $a = async function* (pieces: TemplateStringsArray, ...args: Array<unknown>) {
+    const commandLine = compileTemplate(pieces, ...args);
+    for await (const line of outputAsLines(commandLine)) {
+        yield line;
     }
 }
 
@@ -280,51 +292,18 @@ export function rm(path: string) {
     Deno.removeSync(path, {recursive: true});
 }
 
-export interface AwkOptions {
-    F: string
-    gawk: boolean
-}
-
 export function awk(pieces: TemplateStringsArray, ...args: Array<unknown>) {
-    let compiled = pieces[0], i = 0;
-    for (; i < args.length; i++) compiled += args[i] + pieces[i + 1];
-    for (++i; i < pieces.length; i++) compiled += pieces[i];
+    const compiled = compileTemplate(pieces, ...args);
     const awkTempFile = Deno.makeTempFileSync();
     Deno.writeTextFileSync(awkTempFile, compiled);
-    return async function* (fileName: string, options?: AwkOptions) {
-        let fs = "";
+    return async function* (fileName: string, options?: string) {
         let command = "awk";
-        if (options) {
-            if (options.F) {
-                fs = `-F '${options.F}'`
-            }
-            if (options.gawk) {
-                command = "gawk";
-            }
-        }
-        const commandLine = `${command} ${fs} -f ${awkTempFile} ${fileName}`;
-        const [status, stdout, stderr] = await executeCommandLine("piped", commandLine) as [Deno.ProcessStatus, Uint8Array, Uint8Array];
-        // noinspection DuplicatedCode
-        if (status.code === 0) {
-            const output = textDecoder.decode(await stdout);
-            const lines = output.match(/[^\r\n]+/g);
-            if (lines) {
-                for (const line of lines) {
-                    if (line) {
-                        yield line
-                    }
-                }
-            }
-        } else {
-            throw {
-                exitCode: status.code,
-                stdout: textDecoder.decode(await stdout),
-                stderr: textDecoder.decode(await stderr)
-            };
+        const commandLine = `${command} ${options ?? ""} -f ${awkTempFile} ${fileName}`;
+        for await (const line of outputAsLines(commandLine)) {
+            yield line;
         }
     };
 }
-
 
 export function test(expression: string, callback?: () => void): boolean {
     const pairs = expression.split(" ", 2);
