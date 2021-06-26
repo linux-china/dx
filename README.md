@@ -110,7 +110,7 @@ dx -c zsh > ~/.oh-my-zsh/custom/plugins/dx/_dx
 import {$, cd, pwd, question, os, fs, env} from "https://deno.land/x/deno_dx/mod.ts";
 ```
 
-* built-in functions: cd, pw, echo, printf, cp, mv, rm, mkdir, getops   
+* built-in functions: cd, pw, echo, printf, cp, mv, rm, mkdir, getops
 * test: file conditions and single file test only, such as `if(test('-e mod.ts')) { }`
 * $.alias: introduce alias for command. `$.alias("ll", "ls -al")`
 * $.export: export env variable for command.  `$.expoort('NO_COLOR','true');`
@@ -192,7 +192,7 @@ try {
 Deno std has `fmt/colors.ts` already, and you don't need chalk for simple cases.
 
 ```typescript
-import {red, yellow, blue, green} from "https://deno.land/std@0.95.0/fmt/colors.ts";
+import {red, yellow, blue, green} from "https://deno.land/std@0.99.0/fmt/colors.ts";
 
 console.log(green("Hello"));
 ```
@@ -207,17 +207,39 @@ console.log(green("Hello"));
 * fs is for file system from https://deno.land/std@0.96.0/node/fs.ts
 * os is for operating system from https://deno.land/std@0.96.0/node/os.ts
 
+# Examples
+
+### grep
+
+```typescript
+import {grep} from "https://deno.land/x/deno_dx/mod.ts";
+
+for await (const line of grep`\\d+`("demo.txt")) {
+    console.log("line: ", line);
+}
+```
+
+### awk
+
+```typescript
+import {awk} from "https://deno.land/x/deno_dx/mod.ts";
+
+for await (const line of awk`{ print }`("demo.txt")) {
+    console.log("line: ", line);
+}
+```
+
 # Misc
 
 * .env auto load
 * Compile script into executable binary: `deno compile --unstable -A --lite demo.ts`
-* dx JetBrains IDE plugin: https://plugins.jetbrains.com/plugin/16805-dx 
+* dx JetBrains IDE plugin: https://plugins.jetbrains.com/plugin/16805-dx
 
 ![dx JetBrains IDEs plugin](docs/dx-jetbrains-plugin.png)
 
 # References
 
 * Google zx: https://github.com/google/zx
-* dx JetBrains IDEs plugin: https://plugins.jetbrains.com/plugin/16805-dx  
+* dx JetBrains IDEs plugin: https://plugins.jetbrains.com/plugin/16805-dx
 * Bash Cheatsheet: https://devhints.io/bash https://shellmagic.xyz/
 * Advanced Bash-Scripting Guide: https://tldp.org/LDP/abs/html/
