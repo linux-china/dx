@@ -36,6 +36,8 @@ declare global {
 
     interface Promise<T> {
         lines(): AsyncGenerator<T, void, void>;
+
+        result(): Promise<ProcessOutput>;
     }
 }
 
@@ -175,6 +177,19 @@ Promise.prototype.lines = async function* (this: Promise<string>): AsyncGenerato
         for (const line of lines) {
             yield line
         }
+    }
+};
+
+Promise.prototype.result = async function (this: Promise<string>): Promise<ProcessOutput> {
+    try {
+        const output: string = await this;
+        return {
+            exitCode: 0,
+            stderr: "",
+            stdout: output
+        }
+    } catch (e) {
+        return e as ProcessOutput;
     }
 };
 
