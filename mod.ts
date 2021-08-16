@@ -33,6 +33,10 @@ declare global {
     const $7: string | undefined;
     const $8: string | undefined;
     const $9: string | undefined;
+
+    interface Promise<T> {
+        lines(): AsyncGenerator<T, void, void>;
+    }
 }
 
 interface Env {
@@ -163,6 +167,16 @@ export const $a = async function* (pieces: TemplateStringsArray, ...args: Array<
         yield line;
     }
 }
+
+Promise.prototype.lines = async function* (this: Promise<string>): AsyncGenerator<string, void, void> {
+    const output: string = await this;
+    const lines = output.match(/[^\r\n]+/g);
+    if (lines) {
+        for (const line of lines) {
+            yield line
+        }
+    }
+};
 
 export const $o = async function (pieces: TemplateStringsArray, ...args: Array<unknown>) {
     const status = await executeCommand("inherit", pieces, ...args) as Deno.ProcessStatus;
