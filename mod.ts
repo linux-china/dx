@@ -210,14 +210,10 @@ Promise.prototype.result = async function (this: Promise<string>): Promise<Proce
     }
 };
 
-export const $o = async function (pieces: TemplateStringsArray, ...args: Array<unknown>) {
+export const $o = async function (pieces: TemplateStringsArray, ...args: Array<unknown>): Promise<ProcessOutput> {
     const status = await executeCommand("inherit", pieces, ...args) as Deno.ProcessStatus;
-    if (status.code !== 0) {
-        throw {
-            exitCode: status.code,
-            stdout: "",
-            stderr: ""
-        };
+    return {
+        exitCode: status.code,
     }
 }
 
