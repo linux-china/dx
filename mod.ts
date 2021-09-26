@@ -55,8 +55,8 @@ export const env = Deno.env as Env;
 
 interface ProcessOutput {
     readonly exitCode: number
-    readonly stdout: string
-    readonly stderr: string
+    readonly stdout?: string
+    readonly stderr?: string
 }
 
 interface CmdContext {
@@ -80,7 +80,7 @@ function compileTemplate(pieces: TemplateStringsArray, ...args: Array<unknown>):
     return compiled;
 }
 
-async function executeCommand(outputMode: "piped" | 'inherit' | 'null', pieces: TemplateStringsArray, ...args: Array<unknown>): Promise<[Deno.ProcessStatus, Uint8Array, Uint8Array] | Deno.ProcessStatus> {
+function executeCommand(outputMode: "piped" | 'inherit' | 'null', pieces: TemplateStringsArray, ...args: Array<unknown>): Promise<[Deno.ProcessStatus, Uint8Array, Uint8Array] | Deno.ProcessStatus> {
     return executeCommandLine(outputMode, compileTemplate(pieces, ...args));
 }
 
@@ -138,6 +138,23 @@ export const $: CmdContext = async function (pieces: TemplateStringsArray, ...ar
             stdout: textDecoder.decode(await stdout),
             stderr: textDecoder.decode(await stderr)
         };
+    }
+}
+
+export async function nothrow(result: Promise<string>): Promise<ProcessOutput> {
+    try {
+        const stdout = await result;
+        return {
+            exitCode: 0,
+            stdout: stdout
+        }
+    } catch (e: unknown) {
+        const e1 = e as ProcessOutput;
+        return {
+            exitCode: e1.exitCode,
+            stdout: e1.stdout,
+            stderr: e1.stderr
+        }
     }
 }
 
@@ -330,7 +347,7 @@ export function awk(pieces: TemplateStringsArray, ...args: Array<unknown>) {
     const awkTempFile = Deno.makeTempFileSync();
     Deno.writeTextFileSync(awkTempFile, compiled);
     return async function* (fileName: string, options?: string) {
-        let command = $.awk;
+        const command = $.awk;
         const commandLine = `${command} ${options ?? ""} -f ${awkTempFile} ${fileName}`;
         for await (const line of outputAsLines(commandLine)) {
             yield line;
@@ -342,7 +359,7 @@ export function grep(pieces: TemplateStringsArray, ...args: Array<unknown>) {
     const compiled = compileTemplate(pieces, ...args);
     console.log("regex: ", compiled);
     return async function* (fileName: string, options?: string) {
-        let command = $.grep;
+        const command = $.grep;
         const commandLine = `${command} ${options ?? ""} "${compiled}" ${fileName}`;
         for await (const line of outputAsLines(commandLine)) {
             yield line;
