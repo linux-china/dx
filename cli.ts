@@ -104,7 +104,7 @@ function taskfileNotFound() {
 
 const command = new Command()
     .name("dx")
-    .version("0.1.0")
+    .version("0.3.1")
     .versionOption("-v, --version")
     .description("A tool for writing better scripts with Deno")
     .option("-t, --tasks", "List tasks in Taskfile", {
