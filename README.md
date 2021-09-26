@@ -25,8 +25,8 @@ Create a `demo.ts` file with following code:
 
 ```typescript
 #!/usr/bin/env dx
-import {$, cd, pwd, question, os, fs, env, printf, glob, $a, echo} from "https://deno.land/x/deno_dx/mod.ts";
-import {red, yellow, blue, green} from "https://deno.land/std@0.99.0/fmt/colors.ts";
+import {$, nothrow, cd, pwd, question, os, fs, env, printf, glob, $a, echo} from "https://deno.land/x/deno_dx/mod.ts";
+import {red, yellow, blue, green} from "https://deno.land/std@0.108.0/fmt/colors.ts";
 
 // aliases
 $.alias("ll", "ls -al");
@@ -107,7 +107,16 @@ dx -c zsh > ~/.oh-my-zsh/custom/plugins/dx/_dx
 # functions and variables
 
 ```typescript
-import {$, cd, pwd, question, os, fs, env} from "https://deno.land/x/deno_dx/mod.ts";
+import {$, nothrow, cd, pwd, question, os, fs, env} from "https://deno.land/x/deno_dx/mod.ts";
+```
+
+* $: execute command and return the stdout
+* nothrow: changes behavior of $ to not throw an exception on non-zero exit codes
+
+```typescript 
+if( (await nothrow($`lll -al`)).exitCode > 0 ) { 
+   console.log("Failed")
+}
 ```
 
 * built-in functions: cd, pw, echo, printf, cp, mv, rm, mkdir, getops
@@ -122,7 +131,6 @@ import {$, cd, pwd, question, os, fs, env} from "https://deno.land/x/deno_dx/mod
 * glob:  glob files, like commands `ls -1 *.ts`
 
 ```typescript
-// 
 for await (const fileName of glob("*.ts")) {
     console.log(fileName);
 }
