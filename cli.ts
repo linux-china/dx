@@ -118,7 +118,7 @@ const command = new Command()
         action: async () => {
             console.log("Begin to upgrade dx to last version.")
             const p = Deno.run({
-                cmd: "deno install -q -A --unstable -r -f -n dx https://denopkg.com/linux-china/dx/cli.ts".split(" ")
+                cmd: "deno install -q -A --unstable --no-check -r -f -n dx https://denopkg.com/linux-china/dx/cli.ts".split(" ")
             });
             await p.status();
             p.close();
