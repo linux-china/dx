@@ -1,5 +1,5 @@
-import * as stdFs from "https://deno.land/std@0.105.0/fs/mod.ts";
-import {Command} from "https://deno.land/x/cliffy@v0.19.5/command/command.ts";
+import * as stdFs from "https://deno.land/std@0.108.0/fs/mod.ts";
+import {Command} from "https://deno.land/x/cliffy@v0.19.6/command/command.ts";
 
 const taskfiles = ["Taskfile.ts", "Taskfile.js"]
 
@@ -25,19 +25,19 @@ async function runScriptFile(fileName: string): Promise<void> {
     await import((convertFileToUri(fileName)));
 }
 
-async function runTaskfile(taskfile: string, ...tasks: Array<string>) {
-    let fileUri = convertFileToUri(taskfile);
+function runTaskfile(taskfile: string, ...tasks: Array<string>) {
+    const fileUri = convertFileToUri(taskfile);
     import(fileUri).then(module => {
             if (tasks.length > 0) {
-                let runners = tasks.filter(task => {
+                const runners = tasks.filter(task => {
                     return task in module;
                 }).map(task => {
                     console.log("===Task: " + task);
-                    // @ts-ignore
+                    // @ts-ignore correct
                     return module[task]();
                 });
                 if (runners && runners.length > 0) {
-                    // @ts-ignore
+                    // @ts-ignore correct
                     return Promise.all([...runners]);
                 } else {
                     console.log(`No '${tasks.join(",")}' tasks found in ${taskfile}.`);
@@ -57,13 +57,13 @@ async function runTaskfile(taskfile: string, ...tasks: Array<string>) {
 }
 
 function printTasks() {
-    let taskfile = detectTaskfile();
+    const taskfile = detectTaskfile();
     if (taskfile) {
         import(convertFileToUri(taskfile)).then(module => {
             console.log("Available tasks:")
             Object.entries(module).forEach(pair => {
                 if (pair[0] !== 'default' && typeof pair[1] === 'function') {
-                    let funObj = module[pair[0]];
+                    const funObj = module[pair[0]];
                     if ("desc" in funObj) {
                         console.log(`  ${pair[0]} # ${funObj.desc}`);
                     } else {
@@ -77,7 +77,7 @@ function printTasks() {
     }
 }
 
-async function generateShellCompletion(shell: string) {
+function generateShellCompletion(shell: string) {
     if (shell === "zsh") {
         console.log("#compdef dx\n" +
             "#autload\n" +
@@ -149,7 +149,7 @@ const command = new Command()
                     await runScriptFile(script);
                 }
             } else { // run tasks
-                let taskfile = detectTaskfile();
+                const taskfile = detectTaskfile();
                 if (taskfile) {
                     //script is task name now
                     const tasks = args ? [script, ...args] : [script];
