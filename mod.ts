@@ -363,11 +363,20 @@ export function grep(pieces: TemplateStringsArray, ...args: Array<unknown>) {
     };
 }
 
-export function test(expression: string, callback?: () => void): boolean {
+export async function test(expression: string, callback?: () => void): Promise<boolean> {
+    // hooks
+    try {
+        if (!env.get("UID")) {
+            env.set("UID", await $`id -u`);
+            env.set("GID", await $`id -g`);
+        }
+    } catch (e) {
+        console.error("Failed to execute id command:", e)
+    }
     const pairs = expression.split(" ", 2);
     const condition = pairs[0];
     const fileName = pairs[1];
-    const exists = stdFs.existsSync(fileName);
+    const exists = await stdFs.exists(fileName);
     if (!exists) return false;
     const fileInfo: Deno.FileInfo = Deno.statSync(fileName);
     const uid = parseInt(env.get("UID") ?? "0");
@@ -447,15 +456,5 @@ if (Deno.mainModule.endsWith("/dx/cli.ts")) { // launched by dx, such as `./demo
     $['*'] = Deno.args.join(" ");
 }
 Object.assign(window, args);
-
-// hooks
-try {
-    if (!env.get("UID")) {
-        env.set("UID", await $`id -u`);
-        env.set("GID", await $`id -g`);
-    }
-} catch (e) {
-    console.error("Failed to execute id command:", e)
-}
 
 
