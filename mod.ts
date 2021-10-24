@@ -364,7 +364,7 @@ export function grep(pieces: TemplateStringsArray, ...args: Array<unknown>) {
 }
 
 export async function test(expression: string, callback?: () => void): Promise<boolean> {
-    // hooks
+    // get UID and GID for test
     try {
         if (!env.get("UID")) {
             env.set("UID", await $`id -u`);
